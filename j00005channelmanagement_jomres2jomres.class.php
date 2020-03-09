@@ -12,38 +12,32 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-class j00005channelmanagement_rentalsunited {
+class j00005channelmanagement_jomres2jomres
+{
 	function __construct($componentArgs)
-		{
+	{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return 
-		$MiniComponents =jomres_getSingleton('mcHandler');
-		if ($MiniComponents->template_touch)
-			{
-			$this->template_touchable=false; return;
-			}
-		
-		$ePointFilepath = get_showtime('ePointFilepath');
-		
-		if (file_exists($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php'))
-			require_once($ePointFilepath.'language'.JRDS.get_showtime('lang').'.php');
-		else
-			{
-			if (file_exists($ePointFilepath.'language'.JRDS.'en-GB.php'))
-				require_once($ePointFilepath.'language'.JRDS.'en-GB.php');
-			}
-			
-		require_once($ePointFilepath.'functions.php');
-		jr_import('channelmanagement_rentalsunited_import_property');
-        require_once($ePointFilepath.'xml_authentication.php');
-        if(!defined('RENTALS_UNITED_PLUGIN_ROOT')) {
-            define ('RENTALS_UNITED_PLUGIN_ROOT' , $ePointFilepath );
-        }
-
+		$MiniComponents = jomres_getSingleton('mcHandler');
+		if ($MiniComponents->template_touch) {
+			$this->template_touchable = false;
+			return;
 		}
+
+		$ePointFilepath = get_showtime('ePointFilepath');
+
+		if (file_exists($ePointFilepath . 'language' . JRDS . get_showtime('lang') . '.php'))
+			require_once($ePointFilepath . 'language' . JRDS . get_showtime('lang') . '.php');
+		else {
+			if (file_exists($ePointFilepath . 'language' . JRDS . 'en-GB.php'))
+				require_once($ePointFilepath . 'language' . JRDS . 'en-GB.php');
+		}
+
+		require_once($ePointFilepath . 'functions.php');
+	}
 
 	// This must be included in every Event/Mini-component
 	function getRetVals()
-		{
+	{
 		return null;
-		}
 	}
+}

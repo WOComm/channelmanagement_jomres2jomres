@@ -12,7 +12,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-class j21001channelmanagement_rentalsunited_report_self {
+class j21001channelmanagement_jomres2jomres_report_self {
 	function __construct($componentArgs)
 		{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return 
@@ -24,7 +24,7 @@ class j21001channelmanagement_rentalsunited_report_self {
 		
 		$thin_channels = get_showtime("thin_channels");
 		
-		$thin_channels["rentalsunited"] = array ("channel_name" => "rentalsunited" , "channel_friendly_name" => "Rentals United" , "features" => array ("has_dictionaries" => true ) );
+		$thin_channels["rentalsunited"] = array ("channel_name" => "jomres2jomres" , "channel_friendly_name" => "Jomres 2 Jomres" , "features" => array ("has_dictionaries" => true ) );
 		
 		set_showtime("thin_channels" , $thin_channels);
 		}

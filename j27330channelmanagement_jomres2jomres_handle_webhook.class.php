@@ -21,7 +21,7 @@ defined('_JOMRES_INITCHECK') or die('');
 	 * 
 	 */
 
-class j27330channelmanagement_rentalsunited_handle_webhook
+class j27330channelmanagement_jomres2jomres_handle_webhook
 {	
 	/**
 	 *
@@ -40,14 +40,14 @@ class j27330channelmanagement_rentalsunited_handle_webhook
 			return;
 		}
 		
-		$this_channel = 'rentalsunited';
+		$this_channel = 'jomres2jomres';
 
         logging::log_message("Starting RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
 
 		// This script will collate and send information to the remote site using the authentication information provided in the componentArgs variable.
 		$ePointFilepath=get_showtime('ePointFilepath');
 
-		jr_import('channelmanagement_rentalsunited_push_event_trigger_crossref');
+		/*jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
 		$event_trigger_crossref = new channelmanagement_rentalsunited_push_event_trigger_crossref();
 
 		$push_events = $event_trigger_crossref->events;
@@ -76,7 +76,7 @@ class j27330channelmanagement_rentalsunited_handle_webhook
 				}
 			}
 		}
-		logging::log_message("Completed RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
+		logging::log_message("Completed RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );*/
 	}
 
 	public function getRetVals()

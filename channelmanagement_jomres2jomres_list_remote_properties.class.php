@@ -13,7 +13,7 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 // ################################################################
 
 
-class channelmanagement_rentalsunited_list_remote_properties
+class channelmanagement_jomres2jomres_list_remote_properties
 {
     function __construct()
 	{

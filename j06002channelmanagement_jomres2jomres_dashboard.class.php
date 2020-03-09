@@ -11,7 +11,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-class j06002channelmanagement_rentalsunited_dashboard {
+class j06002channelmanagement_jomres2jomres_dashboard {
 	function __construct($componentArgs)
 		{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return
@@ -25,7 +25,7 @@ class j06002channelmanagement_rentalsunited_dashboard {
 		
 		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_dashboard" ) );
 
-		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
+/*		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 		
 		jr_import('channelmanagement_framework_user_accounts');
 		if (!class_exists('channelmanagement_framework_user_accounts')) {
@@ -50,7 +50,7 @@ class j06002channelmanagement_rentalsunited_dashboard {
 		} else {
 			$items = array_merge( $dashboard_items , $items );
 		}
-		set_showtime("cmf_dashboard_items" , $items );
+		set_showtime("cmf_dashboard_items" , $items );*/
 	}
 
 	// This must be included in every Event/Mini-component

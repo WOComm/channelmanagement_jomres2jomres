@@ -11,7 +11,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-class j06002channelmanagement_rentalsunited {
+class j06002channelmanagement_jomres2jomres {
 	function __construct($componentArgs)
 		{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return
@@ -50,7 +50,7 @@ class j06002channelmanagement_rentalsunited {
 			$output = array();
 			$pageoutput = array();
 
-			$output['CHANNELMANAGEMENT_RENTALSUNITED_TITLE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_TITLE','CHANNELMANAGEMENT_RENTALSUNITED_TITLE',false);
+			$output['CHANNELMANAGEMENT_JOMRES2JOMRES_TITLE'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_TITLE','CHANNELMANAGEMENT_JOMRES2JOMRES_TITLE',false);
 
 			$pageoutput[] = $output;
 			$tmpl = new patTemplate();

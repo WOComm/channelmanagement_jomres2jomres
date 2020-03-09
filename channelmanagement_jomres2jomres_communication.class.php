@@ -15,7 +15,7 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 require_once('XMLParser.php');
 use XMLParser\XMLParser;
 
-class channelmanagement_rentalsunited_communication
+class channelmanagement_jomres2jomres_communication
 	{
 
 
@@ -34,17 +34,17 @@ class channelmanagement_rentalsunited_communication
 		// Webhook events will use this method, but we don't (?) want to cache the messages so we'll not cache them
 		$method_can_be_cached = true;
 
-        jr_import('channelmanagement_rentalsunited_push_event_trigger_crossref');
+/*        jr_import('channelmanagement_rentalsunited_push_event_trigger_crossref');
         $event_trigger_crossref = new channelmanagement_rentalsunited_push_event_trigger_crossref();
 		foreach ( $event_trigger_crossref->events as $event_type ) {
             if ( in_array( $method , $event_type )) {
                 $method_can_be_cached = false;
             }
-        }
+        }*/
 
-		if ($method == 'Pull_ListPropertiesChangeLog_RQ' ) {
+/*		if ($method == 'Pull_ListPropertiesChangeLog_RQ' ) {
 			$method_can_be_cached = false;
-		}
+		}*/
 
 		if ($clear_cache == true ) {
 			$method_can_be_cached = false;
@@ -54,12 +54,12 @@ class channelmanagement_rentalsunited_communication
             $data_hash = md5(serialize($xml_str));
             $filename = $method."_".$data_hash.".php";
 
-            if (!is_dir(JOMRES_TEMP_ABSPATH."cm_ru_data_cache")) {
-                mkdir(JOMRES_TEMP_ABSPATH."cm_ru_data_cache");
+            if (!is_dir(JOMRES_TEMP_ABSPATH."cm_jomres2jomres_data_cache")) {
+                mkdir(JOMRES_TEMP_ABSPATH."cm_jomres2jomres_data_cache");
             }
 
-            if (file_exists( JOMRES_TEMP_ABSPATH."cm_ru_data_cache".JRDS.$filename )) {
-                require_once(JOMRES_TEMP_ABSPATH."cm_ru_data_cache".JRDS.$filename);
+            if (file_exists( JOMRES_TEMP_ABSPATH."cm_jomres2jomres_data_cache".JRDS.$filename )) {
+                require_once(JOMRES_TEMP_ABSPATH."cm_jomres2jomres_data_cache".JRDS.$filename);
                 $class_name = $method."_".$data_hash;
                 $ru_data_cache = new $class_name();
                 return unserialize($ru_data_cache->data);
@@ -128,7 +128,7 @@ var_dump($raw_response);exit;
                     }
                 ";
 
-                file_put_contents(JOMRES_TEMP_ABSPATH . "cm_ru_data_cache" . JRDS . $filename, $cache_data);
+                file_put_contents(JOMRES_TEMP_ABSPATH . "cm_jomres2jomres_data_cache" . JRDS . $filename, $cache_data);
                 return  $sanitised_apostrophes;
             } else {
                  return $contents[$response_method];

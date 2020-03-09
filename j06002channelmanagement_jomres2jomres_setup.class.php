@@ -11,7 +11,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-class j06002channelmanagement_rentalsunited_setup {
+class j06002channelmanagement_jomres2jomres_setup {
 	function __construct($componentArgs)
 		{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return
@@ -23,7 +23,7 @@ class j06002channelmanagement_rentalsunited_setup {
 
 		$ePointFilepath = get_showtime('ePointFilepath');
 		
-		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_setup" ) );
+		/*$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_setup" ) );
 		
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 		
@@ -32,10 +32,10 @@ class j06002channelmanagement_rentalsunited_setup {
 		$output = array();
 		$pageoutput = array();
 			
-		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_TITLE',false);
-		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_MESSAGE',false);
-		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_IMPORT',false);
-		$output['CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT'] = jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT','CHANNELMANAGEMENT_RENTALSUNITED_SETUP_INITIALISE_BUTTON_EXPORT',false);
+		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE',false);
+		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE',false);
+		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT',false);
+		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_EXPORT'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_EXPORT','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_EXPORT',false);
 			
 		$output['IMPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_framework_import_properties&channel_name=".$current_channel);
 		//$output['EXPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_rentalsunited_export_all_properties");
@@ -46,7 +46,7 @@ class j06002channelmanagement_rentalsunited_setup {
 		$tmpl->addRows( 'pageoutput', $pageoutput );
 		$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
 		$tmpl->readTemplatesFromInput( 'channel_setup_dashboard.html' );
-		$this->retVals = $tmpl->getParsedTemplate();
+		$this->retVals = $tmpl->getParsedTemplate();*/
 	}
 
 	// This must be included in every Event/Mini-component

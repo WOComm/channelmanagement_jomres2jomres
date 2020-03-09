@@ -21,7 +21,7 @@ defined('_JOMRES_INITCHECK') or die('');
  *
  */
 
-class j27400channelmanagement_rentalsunited_get_changelog_items
+class j27400channelmanagement_jomres2jomres_get_changelog_items
 {
     /**
      *
@@ -40,10 +40,10 @@ class j27400channelmanagement_rentalsunited_get_changelog_items
             return;
         }
 
-        $channel_name = 'rentalsunited';
+        $channel_name = 'jomres2jomres';
 
         // First we will find our property ids
-        $local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel(  $channel_name );
+        /*$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel(  $channel_name );
 
         if (empty($local_properties)) {
             return;
@@ -189,7 +189,7 @@ class j27400channelmanagement_rentalsunited_get_changelog_items
 					}
 				}
 			}
-		}
+		}*/
 
 
     }

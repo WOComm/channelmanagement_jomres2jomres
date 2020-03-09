@@ -13,14 +13,14 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
 
-class channelmanagement_rentalsunited_import_prices
+class channelmanagement_jomres2jomres_import_prices
 {
 	
 	public static function import_prices(  $manager_id , $channel , $remote_property_id = 0 , $property_uid = 0 , $sleeps = 0 , $room_type_id = 0  )
 	{
 
 		if ( (int)$remote_property_id == 0 ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYID_NOTSET','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYID_NOTSET',false) );
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_PROPERTYID_NOTSET','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_PROPERTYID_NOTSET',false) );
 		}
 		
 		if ( (int)$property_uid == 0 ) {

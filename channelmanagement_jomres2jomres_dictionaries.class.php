@@ -13,7 +13,7 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 // ################################################################
 
 
-class channelmanagement_rentalsunited_dictionaries
+class channelmanagement_jomres2jomres_dictionaries
 {
     function __construct()
 	{
@@ -33,11 +33,11 @@ class channelmanagement_rentalsunited_dictionaries
 		$jrConfig = $siteConfig->get();
 		
 		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_username"]) == '' ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_USERNAME_NOT_SET','CHANNELMANAGEMENT_RENTALSUNITED_USERNAME_NOT_SET',false) );
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET',false) );
 		}
 		
 		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_password"]) == '' ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_PASSWORD_NOT_SET','CHANNELMANAGEMENT_RENTALSUNITED_PASSWORD_NOT_SET',false) );
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET',false) );
 		}
 		
 		$dictionary_array = $this->get_dictionary_initialisation_array();

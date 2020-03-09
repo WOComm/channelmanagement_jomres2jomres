@@ -13,7 +13,7 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
 
-class channelmanagement_rentalsunited_import_property
+class channelmanagement_jomres2jomres_import_property
 {
 	
 	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
@@ -123,14 +123,14 @@ class channelmanagement_rentalsunited_import_property
 
 				// local property type was never found for this property. Throw an error and stop trying as we can't create the property
 				if ( $local_property_type == 0 ) {
-					throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_PROPERTYTYPE_NOTFOUND',false)." Remote property type ".$remote_property['Property']['ObjectTypeID'] );
+					throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_PROPERTYTYPE_NOTFOUND',false)." Remote property type ".$remote_property['Property']['ObjectTypeID'] );
 				}
 				
 				if (!isset($mrp_or_srp)) {
-					throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND',false) );
+					throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_BOOKING_MODEL_NOT_FOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_BOOKING_MODEL_NOT_FOUND',false) );
 				}
 			} else {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND',false) );
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND',false) );
 			}
 			
 
@@ -190,11 +190,11 @@ class channelmanagement_rentalsunited_import_property
 			$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'GET' , 'cmf/location/information/'.$new_property->property_details['lat'].'/'.$new_property->property_details['long'].'/' );
 
 			if (!isset($response_location_information->data->response->country_code) || trim($response_location_information->data->response->country_code) == '' ) {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_COUNTRY_CODE_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_COUNTRY_CODE_NOT_FOUND',false) );
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_COUNTRY_CODE_NOT_FOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_COUNTRY_CODE_NOT_FOUND',false) );
 			}
 
 			if (!isset($response_location_information->data->response->region_id) || trim($response_location_information->data->response->region_id) == '' ) {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REGION_ID_NOT_FOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_REGION_ID_NOT_FOUND',false) );
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND',false) );
 			}
 			
 			$new_property_basics_array =  array (
@@ -302,7 +302,7 @@ class channelmanagement_rentalsunited_import_property
 			$response_validated = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'POST' , 'cmf/property/validate/settings/keys' , $post_data );
 			
 			if (!isset($response_validated->data->response->valid) || $response_validated->data->response->valid == false ) {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_VALIDATE_SETTINGS_FAILED','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_VALIDATE_SETTINGS_FAILED',false) );
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED',false) );
 			}
 
 			if ($response_validated == true) {
@@ -402,7 +402,7 @@ class channelmanagement_rentalsunited_import_property
 	{
 
 		if ( $local_property_type == 0 ) {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND',false) );
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND',false) );
 		}
 		
 		jr_import('jomres_property_types');
@@ -413,10 +413,10 @@ class channelmanagement_rentalsunited_import_property
 			if (isset($jomres_property_types->property_types [$local_property_type]['mrp_srp_flag'])) {
 				return $jomres_property_types->property_types [$local_property_type]['mrp_srp_flag']; // 0 = mrp 1 = srp
 			} else {
-				throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND_IN_PROPERTY_TYPE','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_BOOKING_MODEL_NOT_FOUND_IN_PROPERTY_TYPE',false) );
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_BOOKING_MODEL_NOT_FOUND_IN_PROPERTY_TYPE','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_BOOKING_MODEL_NOT_FOUND_IN_PROPERTY_TYPE',false) );
 			}
 		} else {
-			throw new Exception( jr_gettext('CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_RENTALSUNITED_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND',false) );
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_LOCAL_PROPERTYTYPE_NOTFOUND',false) );
 		}
 	
 	}

@@ -12,7 +12,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-class j21200channelmanagement_rentalsunited_get_dictionary_types {
+class j21200channelmanagement_jomres2jomres_get_dictionary_types {
 	function __construct($componentArgs)
 		{
 		// Must be in all minicomponents. Minicomponents with templates that can contain editable text should run $this->template_touch() else just return 
@@ -23,8 +23,8 @@ class j21200channelmanagement_rentalsunited_get_dictionary_types {
 			}
 		
 		
-		jr_import('channelmanagement_rentalsunited_dictionaries');
-		$channelmanagement_rentalsunited_dictionaries = new channelmanagement_rentalsunited_dictionaries();
+		jr_import('channelmanagement_jomres2jomres_dictionaries');
+		$channelmanagement_jomres2jomres_dictionaries = new channelmanagement_jomres2jomres_dictionaries();
 		}
 
 	// This must be included in every Event/Mini-component

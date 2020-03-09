@@ -12,7 +12,7 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-function get_remote_admin_uri_rentalsunited( $remote_uid = 0 ) 
+function get_remote_admin_uri_jomres2jomres( $remote_uid = 0 )
 {
 	return "https://new.rentalsunited.com/MyProperties/Edit/".$remote_uid."#step-1";
 }

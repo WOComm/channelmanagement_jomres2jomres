@@ -21,7 +21,7 @@ defined('_JOMRES_INITCHECK') or die('');
  *
  */
 
-class j27410channelmanagement_rentalsunited_process_changelog_queue_item
+class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 {
     /**
      *
@@ -41,18 +41,18 @@ class j27410channelmanagement_rentalsunited_process_changelog_queue_item
         }
 
 
-        $item = unserialize($componentArgs->item);
+        /*$item = unserialize($componentArgs->item);
 
 
 
 		if ($componentArgs->id == 6 ) {
-			$new_class_name = 'channelmanagement_rentalsunited_changelog_item_update_'.strtolower($item->thing);
+			$new_class_name = 'channelmanagement_jomres2jomres_changelog_item_update_'.strtolower($item->thing);
 			jr_import($new_class_name );
 			if (class_exists($new_class_name)) {
 				$thing_class_result = new $new_class_name($componentArgs);
 			}
 
-		}
+		}*/
 
     }
 
