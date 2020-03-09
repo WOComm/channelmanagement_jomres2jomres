@@ -14,20 +14,23 @@ defined( '_JOMRES_INITCHECK' ) or die( '' );
 
 jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_TITLE',"Jomres 2 Jomres Integration");
 
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_TITLE',"RU Username");
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_DESC',"Your Rentals United username");
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_TITLE',"RU Password");
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_DESC',"Your Rentals United password");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_TITLE',"Parent site client id");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_DESC',"The parent site's client id. On the parent site you will need a unique client id and secret with all api feature plugins installed, the Channel Management Framework plugin installed, and when you create/edit the client id/secret key pair you will need to give it access to all available scopes.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_TITLE',"Parent site client secret");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_DESC',"The parent site client secret");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_TITLE',"Parent url");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_DESC',"The url to the parent Jomres site. ");
 
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET',"Error, your Rentals United username is not set. Visit the Property Configuration > Rentals United Integration tab to save  your username.");
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET',"Error, your Rentals United password is not set. Visit the Property Configuration > Rentals United Integration tab to save  your password.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET',"Error, your Parent site client id is not set. Visit the Property Configuration > Channel Manager accounts tab to save  your client id.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET',"Error, your Parent site secret is not set. Visit the Property Configuration > Channel Manager accounts tab to save  your secret.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENT_NOT_SET',"Error, your Parent site secret url is not set. Visit the Property Configuration > Channel Manager accounts tab to save  your parent site url.");
 
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE',"Error, your Rentals United username is not set. Visit Site Configuration > Channel Manager Accounts tab to save  your username.");
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE',"Error, your Rentals United password is not set. Visit Site Configuration > Channel Manager Accounts tab to save  your password.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE',"Error, your Client id is not set. Visit Site Configuration > Channel Manager Accounts tab to save  your username.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE',"Error, your Client id is not set. Visit Site Configuration > Channel Manager Accounts tab to save  your password.");
 
 jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE',"Channel setup");
 
-jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE',"Rentals United : Import new properties.");
+jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE',"Jomres 2 Jomres : Import new properties.");
 jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT',"IMPORT");
 jr_define('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_EXPORT',"EXPORT");
 

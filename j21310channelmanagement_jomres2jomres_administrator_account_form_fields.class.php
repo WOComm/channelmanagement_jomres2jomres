@@ -25,24 +25,30 @@ class j21310channelmanagement_jomres2jomres_administrator_account_form_fields {
 		
 		$ePointFilepath = get_showtime('ePointFilepath');
 		
-/*		$channel_administrator_form_fields = get_showtime('channel_administrator_form_fields');
+		$channel_administrator_form_fields = get_showtime('channel_administrator_form_fields');
 		
 		$channel_administrator_form_fields[$channel_name] = array ( 
-			"channel_management_rentals_united_username" => 
+			"channel_management_jomres2jomres_client_id" =>
 				array (
 					"type" => "input" , 
 					"field_title" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_TITLE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_TITLE', false),
 					"field_help" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_DESC', 'CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_DESC', false),
 					) , 
-			"channel_management_rentals_united_password" => 
+			"channel_management_jomres2jomres_client_secret" =>
 				array (
 					"type" => "password" ,
 					"field_title" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_TITLE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_TITLE', false),
 					"field_help" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_DESC', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_DESC', false),
-					) 
-			);
-		
-		set_showtime('channel_administrator_form_fields' , $channel_administrator_form_fields );*/
+					) ,
+			"channel_management_jomres2jomres_parent_site" =>
+				array (
+					"type" => "input" ,
+					"field_title" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_TITLE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_TITLE', false),
+					"field_help" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_DESC', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_DESC', false),
+				)
+		);
+
+		set_showtime('channel_administrator_form_fields' , $channel_administrator_form_fields );
 		
 		}
 

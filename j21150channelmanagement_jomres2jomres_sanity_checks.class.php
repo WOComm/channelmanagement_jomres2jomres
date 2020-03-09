@@ -24,33 +24,23 @@ class j21150channelmanagement_jomres2jomres_sanity_checks
 		
 		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j21150channelmanagement_" , "_sanity_checks" ) );
 		
-		/*$channel_sanity_checks_errors = get_showtime('channel_sanity_checks_errors');
+		$channel_sanity_checks_errors = get_showtime('channel_sanity_checks_errors');
 		
 		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
 		$jrConfig = $siteConfig->get();
 
-		if ( !isset($jrConfig['channel_manager_framework_user_accounts']['rentalsunited'][ 'channel_management_rentals_united_username' ]) || trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited'][ 'channel_management_rentals_united_username' ]) == '' ) {
+		if ( !isset($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_client_id' ]) || trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_client_id' ]) == '' ) {
 			$channel_sanity_checks_errors[] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE', false);
 			}
-		
-		if ( !isset($jrConfig['channel_manager_framework_user_accounts']['rentalsunited'][ 'channel_management_rentals_united_password' ]) || trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited'][ 'channel_management_rentals_united_password' ]) == '' ) {
+
+		if ( !isset($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_client_secret' ]) || trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_client_secret' ]) == '' ) {
 			$channel_sanity_checks_errors[] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET_ADMIN_SANITY_CHECK_MESSAGE', false);
 			}
-		*/
-		/* $dictionary_class_name = 'channelmanagement_'.$current_channel.'_dictionaries';
-		jr_import($dictionary_class_name);
-		if ( !class_exists($dictionary_class_name) ) {
-			echo jr_gettext('CHANNELMANAGEMENT_FRAMEWORK_MAPPING_CHANNEL_DICTIONARY_CLASS_DOESNT_EXIST','CHANNELMANAGEMENT_FRAMEWORK_MAPPING_CHANNEL_DICTIONARY_CLASS_DOESNT_EXIST',false);
-			return;
+
+		if ( !isset($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_parent_site' ]) || trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres'][ 'channel_management_jomres2jomres_parent_site' ]) == '' ) {
+			$channel_sanity_checks_errors[] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENT_NOT_SET', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PARENT_NOT_SET', false);
 		}
-		$dictionary_class = new $dictionary_class_name();
-		$dictionary_items = $dictionary_class->get_mappable_dictionary_items();
-		
-		$required_rows = array();
-		foreach ($dictionary_items as $key=>$val) {
-			$required_rows[]
-		} */
-		
+
 		set_showtime('channel_sanity_checks_errors' , $channel_sanity_checks_errors );
 		
 	}

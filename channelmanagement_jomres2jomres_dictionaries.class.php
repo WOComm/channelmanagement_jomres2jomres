@@ -32,11 +32,11 @@ class channelmanagement_jomres2jomres_dictionaries
 		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
 		$jrConfig = $siteConfig->get();
 		
-		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_username"]) == '' ) {
+		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_jomres2jomres_client_id"]) == '' ) {
 			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET',false) );
 		}
 		
-		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_rentals_united_password"]) == '' ) {
+		if ( trim($jrConfig['channel_manager_framework_user_accounts']['rentalsunited']["channel_management_jomres2jomres_client_secret"]) == '' ) {
 			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET',false) );
 		}
 		

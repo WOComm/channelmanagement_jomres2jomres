@@ -24,7 +24,7 @@ class j21001channelmanagement_jomres2jomres_report_self {
 		
 		$thin_channels = get_showtime("thin_channels");
 		
-		$thin_channels["rentalsunited"] = array ("channel_name" => "jomres2jomres" , "channel_friendly_name" => "Jomres 2 Jomres" , "features" => array ("has_dictionaries" => true ) );
+		$thin_channels["jomres2jomres"] = array ("channel_name" => "jomres2jomres" , "channel_friendly_name" => "Jomres 2 Jomres" , "features" => array ("has_dictionaries" => true ) );
 		
 		set_showtime("thin_channels" , $thin_channels);
 		}
