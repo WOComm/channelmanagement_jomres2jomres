@@ -23,7 +23,7 @@ class j06002channelmanagement_jomres2jomres_setup {
 
 		$ePointFilepath = get_showtime('ePointFilepath');
 		
-		/*$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_setup" ) );
+		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_setup" ) );
 		
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 		
@@ -39,14 +39,14 @@ class j06002channelmanagement_jomres2jomres_setup {
 			
 		$output['IMPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_framework_import_properties&channel_name=".$current_channel);
 		//$output['EXPORT_URL'] = jomresURL(JOMRES_SITEPAGE_URL."&task=channelmanagement_rentalsunited_export_all_properties");
-			
+
 		$pageoutput[] = $output;
 			
 		$tmpl = new patTemplate();
 		$tmpl->addRows( 'pageoutput', $pageoutput );
 		$tmpl->setRoot( $ePointFilepath.'templates'.JRDS.find_plugin_template_directory() );
 		$tmpl->readTemplatesFromInput( 'channel_setup_dashboard.html' );
-		$this->retVals = $tmpl->getParsedTemplate();*/
+		$this->retVals = $tmpl->getParsedTemplate();
 	}
 
 	// This must be included in every Event/Mini-component

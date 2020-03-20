@@ -12,30 +12,48 @@
 defined( '_JOMRES_INITCHECK' ) or die( '' );
 // ################################################################
 
-require_once('XMLParser.php');
-use XMLParser\XMLParser;
-
 class channelmanagement_jomres2jomres_communication
 	{
 
 
-	function __construct()
+	function __construct( $user_id = 0 )
 	{
-		$this->url = 'http://rm.rentalsunited.com/api/Handler.ashx';
+		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
+		$jrConfig = $siteConfig->get();
+
+		if ( trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_parent_site"]) == '' ) {
+			throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENT_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_PARENT_NOT_SET',false) );
+		}
+
+		$url = trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_parent_site"] , '/' );
+		$url = parse_url($url);
+		$this->url = $url['scheme'].'://'.$url['host'];
+		$this->path = trim( $url['path'] , "_" );
+
+		$plugin_settings = cmf_jomres2jomres_get_plugin_setting( $user_id , $url['host']);
+
+		if (isset($plugin_settings->token)) {
+			$this->token = $plugin_settings->token;
+		} else {
+			$this->token = $this->get_token();
+			cmf_jomres2jomres_save_plugin_setting( $user_id , $url['host'] , 'token' , $this->token );
+		}
+		if (!isset($plugin_settings->channel_id)) {
+			$channel_id = $this->announce();
+			cmf_jomres2jomres_save_plugin_setting( $user_id , $url['host'] , 'channel_id' , $channel_id );
+		}
 	}
 
-	/*
+
+
 	
-	
-	*/
-	
-	public function communicate( $method = '' , $xml_str = '' , $clear_cache = false )
+	public function communicate( $method = 'GET' , $endpoint = '' , $putpost = [] , $clear_cache = false )
 	{
 		// Webhook events will use this method, but we don't (?) want to cache the messages so we'll not cache them
 		$method_can_be_cached = true;
 
-/*        jr_import('channelmanagement_rentalsunited_push_event_trigger_crossref');
-        $event_trigger_crossref = new channelmanagement_rentalsunited_push_event_trigger_crossref();
+/*        jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
+        $event_trigger_crossref = new channelmanagement_jomres2jomres_push_event_trigger_crossref();
 		foreach ( $event_trigger_crossref->events as $event_type ) {
             if ( in_array( $method , $event_type )) {
                 $method_can_be_cached = false;
@@ -51,7 +69,7 @@ class channelmanagement_jomres2jomres_communication
 		}
 
 		if ( $method_can_be_cached ) {
-            $data_hash = md5(serialize($xml_str));
+            $data_hash = md5(serialize($endpoint));
             $filename = $method."_".$data_hash.".php";
 
             if (!is_dir(JOMRES_TEMP_ABSPATH."cm_jomres2jomres_data_cache")) {
@@ -67,20 +85,30 @@ class channelmanagement_jomres2jomres_communication
         }
 
  		try {
-			$uri = $this->url;
+			$uri = $this->url.$this->path.$endpoint.'/';
 
-			$client = new GuzzleHttp\Client(['timeout' => 6, 'connect_timeout' => 6]);
-
-			logging::log_message('Starting guzzle call to '.$uri, 'Guzzle', 'DEBUG');
-			//var_dump($xml_str);exit;
-			$options = [
-				'headers' => [
-					'Content-Type' => 'text/xml; charset=UTF8',
-				],
-				'body' => str_replace(array('.', ' ', "\n", "\t", "\r"), '',  $xml_str ),
+			$headers = [
+				'Content-Type' => 'application/json',
+				'Authorization' => 'Bearer ' .$this->token,
+				'Accept'        => 'application/json',
+				'X-JOMRES-channel-name' => 'jomres2jomres',
 			];
 
-			$response = $client->request('POST', $uri, $options);
+			$client = new GuzzleHttp\Client(['timeout' => 6, 'connect_timeout' => 6 , 'headers' => $headers ]);
+
+			logging::log_message('Starting guzzle call to '.$uri, 'Guzzle', 'DEBUG');
+
+			if ( $method == 'POST' ||  $method == 'PUT' ) {
+				$options = [
+					'query' => [
+						$putpost
+					],
+				];
+			} else {
+				$options = [];
+			}
+
+			$response = $client->request($method, $uri, $options);
 
 		}
 		catch (Exception $e) {
@@ -95,92 +123,155 @@ class channelmanagement_jomres2jomres_communication
 		if (!isset($response)) {
 			return false;
 		}
-		
-		$raw_response = (string)$response->getBody();
-var_dump($raw_response);exit;
-		$response_body = new SimpleXMLElement($raw_response);
 
-		$contents = $this->xmlToArray($response_body );
+		$response_str = (string)$response->getBody();
+		$response_json_decoded = json_decode($response_str);
 
-		// Check to see if the response contains _RS, which means that it's a response to a push method. If so we will process it differently
-		$response_method = str_replace( "_RQ" , "_RS" , $method);
+		if ( $method_can_be_cached && isset($response_json_decoded->data->response) ) {
 
-        // There's a typo in RU's responses, Pull_GetLocatinByName_RS is returned when it should say Pull_GetLocationByName_RS, so we'll make a special exception and hard-code a fix here
-        if ($method == "Pull_GetLocationByName_RQ") {
-            if (!isset($contents[$response_method])) { // In case they ever fix the typo
-                $response_method = "Pull_GetLocatinByName_RS";
-            }
+        	$cache_data = "<?php
+	        defined(\"_JOMRES_INITCHECK\" ) or die( \"\" );
+			class " . $method . "_" . $data_hash . " 
+				{
+					public function __construct()
+						{
+							\$this->method =  '" . $method . "';
+							\$this->data = '" . serialize($response_json_decoded->data->response) . "';
+						}
+ 				}
+				";
 
-        }
+				file_put_contents(JOMRES_TEMP_ABSPATH . "cm_jomres2jomres_data_cache" . JRDS . $filename, $cache_data);
+			}
 
-        if ( isset($contents[$response_method])) {
-            if ( $method_can_be_cached ) {
-                $sanitised_apostrophes = str_replace("'", "&#39;", $contents[$response_method]);
-                $cache_data = "<?php
-                    defined(\"_JOMRES_INITCHECK\" ) or die( \"\" );
-                    class " . $method . "_" . $data_hash . " 
-                    {
-                        public function __construct()
-                        {
-                            \$this->method =  '" . $method . "';
-                            \$this->data = '" . serialize($sanitised_apostrophes) . "';
-                        }
-                    }
-                ";
-
-                file_put_contents(JOMRES_TEMP_ABSPATH . "cm_jomres2jomres_data_cache" . JRDS . $filename, $cache_data);
-                return  $sanitised_apostrophes;
-            } else {
-                 return $contents[$response_method];
-            }
-
-        } else {
-
-        }
-
+		if (isset($response_json_decoded->data->response)) {
+			return $response_json_decoded->data->response;
+		} else {
+			return false;
+			}
 		}
-		
-		
-	function xmlToArray(SimpleXMLElement $xml)
+
+
+	/*
+	*
+	* Get the token from the remote service
+	*
+	*/
+		private function get_token()
 		{
-			$parser = function (SimpleXMLElement $xml, array $collection = []) use (&$parser) {
-				$nodes = $xml->children();
-				$attributes = $xml->attributes();
+			$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
+			$jrConfig = $siteConfig->get();
 
-				if (0 !== count($attributes)) {
-					foreach ($attributes as $attrName => $attrValue) {
-						$collection['@attributes'][$attrName] = strval($attrValue);
-					}
+			if ( trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_id"]) == '' ) {
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_USERNAME_NOT_SET',false) );
+			}
+
+			if ( trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_secret"]) == '' ) {
+				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET','CHANNELMANAGEMENT_JOMRES2JOMRES_PASSWORD_NOT_SET',false) );
+			}
+
+
+			try {
+				// Guzzle giving me problems, switching to curl for now but this needs to be refactored. Todo.
+				$data =  [
+					'grant_type' => 'client_credentials',
+					'client_id' => trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_id"]),
+					'client_secret' => trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_secret"])
+				];
+
+				$ch = curl_init($this->url.$this->path.'/');
+
+				curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 30); //timeout after 30 seconds
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+				curl_setopt($ch,CURLOPT_VERBOSE,true);
+				//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+
+				$result = curl_exec($ch);
+				$status = curl_getinfo($ch);
+
+				$response = json_decode($result);
+
+				if ( isset($response->access_token)) {
+					return $response->access_token;
+				} else {
+					throw new Exception( "Access token not received" );
 				}
 
-				if (0 === $nodes->count()) {
-					if($xml->attributes())
-					{
-						$collection['value'] = strval($xml);
-					}
-					else
-					{
-						$collection = strval($xml);
-					}
-					return $collection;
-				}
+				/*$options = [
+					'form_params' => [
+						'grant_type' => 'client_credentials',
+						'client_id' => trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_id"]),
+						'client_secret' => trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_client_secret"])
+					],
+					'debug' => true,
+					'allow_redirects' => true
+				];
+				$client = new \GuzzleHttp\Client(["base_uri" => $this->url]);
 
-				foreach ($nodes as $nodeName => $nodeValue) {
-                    set_time_limit(0);
-					if (count($nodeValue->xpath('../' . $nodeName)) < 2) {
-						$collection[$nodeName] = $parser($nodeValue);
-						continue;
-					}
+				$response = $client->post($this->path.'/', $options);
 
-					$collection[$nodeName][] = $parser($nodeValue);
-				}
+				var_dump($response->getBody());exit;*/
+			}
+			catch (Exception $e) {
+				echo "Failed to get response from channel
+					";
 
-				return $collection;
-			};
-
-			return [
-				$xml->getName() => $parser($xml)
-			];
+				var_dump($e->getMessage());exit;
+				logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
+				return false;
+			}
 		}
 
+	/*
+	*
+	* Announce this server to the remote service.
+	*
+	* Every connection to an instance of a cmf rest api installation must be "announced" (registered as a channel) to use the cmf features.
+	*
+	*/
+	private function announce()
+	{
+		$endpoint = '/cmf/channel/announce/jomres2jomres/Jomres%202%20Jomres';
+		try {
+			$uri = $this->url.$this->path.$endpoint;
+
+			$headers = [
+				'Content-Type' => 'application/json',
+				'Authorization' => 'Bearer ' .$this->token,
+				'Accept'        => 'application/json'
+			];
+
+			$options = 	[
+				'form_params' => [
+					'params' => '{"has_dictionaries":true}' // For now, this is nonsense and will probably need to be removed
+				]
+			];
+
+			$client = new GuzzleHttp\Client(['timeout' => 6, 'connect_timeout' => 6 , 'headers' => $headers ]);
+
+			logging::log_message('Starting guzzle call to '.$uri, 'Guzzle', 'DEBUG');
+
+			$response = $client->request("POST", $uri , $options );
+
+			$reply = json_decode((string)$response->getBody());
+
+			if (isset($reply->data->response) && (int)$reply->data->response > 0 ) {
+				return (int)$reply->data->response;
+			} else {
+				throw new Exception( "Couldn't get the channel id" );
+			}
+		}
+		catch (Exception $e) {
+			echo "Failed to get response from channel
+			";
+
+			var_dump($e->getMessage());exit;
+			logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
+			return false;
+		}
+	}
 	}

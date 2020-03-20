@@ -33,6 +33,9 @@ class j00005channelmanagement_jomres2jomres
 		}
 
 		require_once($ePointFilepath . 'functions.php');
+		if(!defined('JOMRES2JOMRES_PLUGIN_ROOT')) {
+			define ('JOMRES2JOMRES_PLUGIN_ROOT' , $ePointFilepath );
+		}
 	}
 
 	// This must be included in every Event/Mini-component

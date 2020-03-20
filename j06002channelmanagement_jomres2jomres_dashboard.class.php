@@ -25,7 +25,7 @@ class j06002channelmanagement_jomres2jomres_dashboard {
 		
 		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_dashboard" ) );
 
-/*		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
+		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 		
 		jr_import('channelmanagement_framework_user_accounts');
 		if (!class_exists('channelmanagement_framework_user_accounts')) {
@@ -35,13 +35,13 @@ class j06002channelmanagement_jomres2jomres_dashboard {
 		$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
 		$user_accounts = $channelmanagement_framework_user_accounts->get_accounts_for_user($JRUser->id);
 
-		if (empty($user_accounts)) {
+		if (!isset($user_accounts[$current_channel]) || empty($user_accounts[$current_channel])) {
 			jomresRedirect(jomresURL(JOMRES_SITEPAGE_URL.'&task=channelmanagement_framework_user_accounts&jr_redirect_url='.jr_base64url_encode(getCurrentUrl())), '');
 		}
 
 		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( (int)$JRUser->userid , $current_channel );
 		
-		$item = $MiniComponents->specificEvent('06002', 'channelmanagement_rentalsunited_setup' , array("output_now" => false ) );
+		$item = $MiniComponents->specificEvent('06002', 'channelmanagement_jomres2jomres_setup' , array("output_now" => false ) );
 		$dashboard_items = array ( $item );
 		
 		$items = get_showtime("cmf_dashboard_items");
@@ -50,7 +50,7 @@ class j06002channelmanagement_jomres2jomres_dashboard {
 		} else {
 			$items = array_merge( $dashboard_items , $items );
 		}
-		set_showtime("cmf_dashboard_items" , $items );*/
+		set_showtime("cmf_dashboard_items" , $items );
 	}
 
 	// This must be included in every Event/Mini-component

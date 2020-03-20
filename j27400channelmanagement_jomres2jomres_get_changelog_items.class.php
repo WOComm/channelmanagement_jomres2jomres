@@ -80,7 +80,7 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
         $tmpl = new patTemplate();
         $tmpl->addRows('pageoutput', array($output));
         $tmpl->addRows('rows', $rows);
-      	$tmpl->setRoot(RENTALS_UNITED_PLUGIN_ROOT . 'templates' . JRDS . "xml");
+      	$tmpl->setRoot(JOMRES2JOMRES_PLUGIN_ROOT . 'templates' . JRDS . "xml");
         $tmpl->readTemplatesFromInput('Pull_ListPropertiesChangeLog_RQ.xml');
         $xml_str = $tmpl->getParsedTemplate();
 

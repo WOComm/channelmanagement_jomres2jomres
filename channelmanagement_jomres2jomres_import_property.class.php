@@ -20,56 +20,72 @@ class channelmanagement_jomres2jomres_import_property
 	{
 
 		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton'); 
-		
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 
 		$mapped_dictionary_items = channelmanagement_framework_utilities :: get_mapped_dictionary_items ( $channel , $mapped_to_jomres_only = true );
 
-        jr_import('channelmanagement_rentalsunited_communication');
-        $channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
+        jr_import('channelmanagement_jomres2jomres_communication');
+        $channelmanagement_jomres2jomres_communication = new channelmanagement_jomres2jomres_communication();
 
         set_showtime("property_managers_id" , $JRUser->id );
-        $auth = get_auth();
 
-        $output = array(
-            "AUTHENTICATION" => $auth,
-            "PROPERTY_ID" => $remote_property_id,
-        );
+		$remote_property = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/'.$remote_property_id  , [] , true );
+
+		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
+		if ( (int)$remote_property->published == 1 ) {
+
+			$room_info = json_decode(json_encode($remote_property->room_info), true);
 
 
-        $tmpl = new patTemplate();
-        $tmpl->addRows('pageoutput', array($output));
-        $tmpl->setRoot(RENTALS_UNITED_PLUGIN_ROOT . 'templates' . JRDS . "xml");
-        $tmpl->readTemplatesFromInput('Pull_ListSpecProp_RQ.xml');
-        $xml_str = $tmpl->getParsedTemplate();
+/*			array(3) {
+				["rooms"]=>
+  array(2) {
+					[1]=>
+    string(1) "1"
+					[2]=>
+    string(1) "2"
+  }
+  ["rooms_by_type"]=>
+  array(1) {
+					[1]=>
+    array(2) {
+						[0]=>
+      string(1) "1"
+						[1]=>
+      string(1) "2"
+    }
+  }
+  ["room_types"]=>
+  array(1) {
+					[1]=>
+    array(3) {
+						["abbv"]=>
+      string(16) "Room Double beds"
+						["desc"]=>
+      string(0) ""
+						["image"]=>
+      string(10) "double.png"
+    }
+  }
+}*/
 
-		$remote_property = $channelmanagement_rentalsunited_communication->communicate( 'Pull_ListSpecProp_RQ' , $xml_str );
-
-		// IsArchived
-		if ($remote_property['Property']['IsArchived'] != "true" ) {
-			$atts = '@attributes';
-			
-			// We need to collate information about the property, room features, property features etc. Duplicates can appear so we need to array unique the property later
-			// Not the best place for this, probably needs to be in the cmf libs
-			
 			// room types
 			$property_room_types = array();
- 			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'])){
-				foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $amenity) {
-					$amenity_id = $amenity[$atts]['CompositionRoomID'];
-					if ($amenity_id == 257 ) {  // Will this change?
-						if ( isset($mapped_dictionary_items['Pull_ListCompositionRooms_RQ']) && array_key_exists ( $amenity_id , $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'] ) ) {
-							$arr = $mapped_dictionary_items['Pull_ListCompositionRooms_RQ'][$amenity_id];
-							unset($arr->item);
+			$max_guests_in_property = 0;
+				foreach ($room_info['room_types'] as $remote_type_id => $remote_type_details ) {
+					if ( isset($mapped_dictionary_items['_cmf_list_room_types']) && !empty($mapped_dictionary_items['_cmf_list_room_types']) ) {
+						foreach ($mapped_dictionary_items['_cmf_list_room_types'] as $mapped_item) {
+							if ( $mapped_item->remote_item_id == $remote_type_id ) {
+								$arr = $mapped_dictionary_items['_cmf_list_room_types'][$remote_type_id];
+								$count = 0;
 
-							$count = 0;
-							foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $a) {
-								$a_id = $a[$atts]['CompositionRoomID'];
-								if ( $a_id == $amenity_id ) {
-									$count++;
+								foreach ($room_info['rooms_max_people'][$remote_type_id] as $a) { // Not sure yet if I need count
+									$count = $count + $a;
+									$max_guests = $a;
+									$max_guests_in_property = $max_guests_in_property + $a;
 								}
+							$property_room_types[] = array("amenity" => $arr, "count" => $count, "max_guests" => $max_guests);
 							}
-							$property_room_types[] = array ( "amenity" => $arr , "count" => $count , "max_guests" => $remote_property['Property']['StandardGuests'] ) ;
 						}
 					}
 				}
@@ -77,7 +93,9 @@ class channelmanagement_jomres2jomres_import_property
 			}
 
             // room features
+			// Not supported yet
 			$property_room_features = array();
+			/*
  			if (!empty($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities']) && !empty($mapped_dictionary_items['Pull_ListAmenitiesAvailableForRooms_RQ'] )){
 				foreach ($remote_property['Property']['CompositionRoomsAmenities']['CompositionRoomAmenities'] as $amenity) {
 					$amenity_id = $amenity[$atts]['CompositionRoomID'];
@@ -90,34 +108,31 @@ class channelmanagement_jomres2jomres_import_property
 						
 				}
 				$property_room_features = array_unique($property_room_features, SORT_REGULAR);
-			}
+			}*/
 
 			// Property features
 			$property_features = array();
-			
- 			if (!empty($remote_property['Property']['Amenities']['Amenity'])){
-				foreach ($remote_property['Property']['Amenities']['Amenity'] as $amenity) {
-					$amenity_id = $amenity['value'];
-					if (  isset($mapped_dictionary_items['Pull_ListAmenities_RQ']) && array_key_exists ( $amenity_id , $mapped_dictionary_items['Pull_ListAmenities_RQ'] ) ) {
-						$arr = $mapped_dictionary_items['Pull_ListAmenities_RQ'][$amenity_id];
-						unset($arr->item);
-						$property_features[] = $arr;
+			if ( $remote_property->property_features != '' ) {
+				$bang = explode ( "," , $remote_property->property_features );
+				if (!empty($bang)) {
+					foreach ($bang as $remote_property_feature_id ) {
+						foreach ( $mapped_dictionary_items['_cmf_list_property_features'] as $mapped_property_feature ) {
+							if ( $mapped_property_feature->jomres_id == $remote_property_feature_id ) {
+								$property_features[] = $mapped_property_feature; // Don't really need all of this var's details, but it makes tracing it thru the system heckin' easier because my brain is fried by the coronavirus worries
+							}
+						}
 					}
-						
 				}
-				$property_features = array_unique($property_features, SORT_REGULAR);
-			}
-			
+
 			// Find the local property type for this property
-			$local_property_type = 0;
 
- 			if (isset($remote_property['Property']['ObjectTypeID'])){
+
+ 			if (isset($remote_property->ptype_id)){
 				$local_property_type = 0;
-				foreach ($mapped_dictionary_items['Pull_ListOTAPropTypes_RQ'] as $mapped_property_type) {
-					if ($remote_property['Property']['ObjectTypeID'] == $mapped_property_type->remote_item_id) {
-
+				foreach ($mapped_dictionary_items['_cmf_list_property_types'] as $mapped_property_type) {
+					if ($remote_property->ptype_id == $mapped_property_type->remote_item_id) {
 						$local_property_type = $mapped_property_type->jomres_id;
-						$mrp_or_srp = channelmanagement_rentalsunited_import_property::get_property_type_booking_model( $local_property_type ); // Is this an MRP or SRP?
+						$mrp_or_srp = channelmanagement_jomres2jomres_import_property::get_property_type_booking_model( $local_property_type ); // Is this an MRP or SRP?
 					}
 				}
 
@@ -132,61 +147,82 @@ class channelmanagement_jomres2jomres_import_property
 			} else {
 				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REMOTEPROPERTYTYPE_NOTFOUND',false) );
 			}
-			
 
+			$image_info = json_decode(json_encode($remote_property->images), true);
 
 			// Images to be imported
 			$image_urls = array();
-			if (!empty($remote_property['Property']['Images']['Image'])) {
-				foreach ($remote_property['Property']['Images']['Image'] as $image ) {
-					$image_urls[] = $image['value'];
+
+			if (!empty($image_info['property'])) {
+				foreach ($image_info['property'] as $images ) {
+					if ( !empty($images) ) {
+						foreach ( $images as $image ) {
+							$image_urls['property'][] = $image_info['image_relative_path'].$image['large'];
+						}
+					}
 				}
 			}
-			
+			if (!empty($image_info['slideshow'])) {
+				foreach ($image_info['slideshow'] as $images ) {
+					if ( !empty($images) ) {
+						foreach ( $images as $image ) {
+							$image_urls['slideshow'][] = $image['image_relative_path'].$image['large'];
+						}
+					}
+				}
+			}
+
 			$new_property = new stdclass();
 						
-			$new_property->property_details['property_id']				= $remote_property['Property']['ID']['value'];
-			$new_property->property_details['remote_ptype_id']			= $remote_property['Property']['ObjectTypeID'];
+			$new_property->property_details['property_id']				= $remote_property->propertys_uid;
+			$new_property->property_details['remote_ptype_id']			= $remote_property->ptype_id;
 			$new_property->property_details['local_ptype_id']			= $local_property_type;
 			
-			$new_property->property_details['name']						= $remote_property['Property']['Name'];
+			$new_property->property_details['name']						= $remote_property->property_name;
 
-			$new_property->property_details['street']					= $remote_property['Property']['Street'];
-			$new_property->property_details['postcode']					= $remote_property['Property']['ZipCode'];
-			$new_property->property_details['email']					= $remote_property['Property']['ArrivalInstructions']['Email'];
-			$new_property->property_details['tel']						= $remote_property['Property']['ArrivalInstructions']['Phone'];
-			$new_property->property_details['postcode']					= $remote_property['Property']['ZipCode'];
-			$new_property->property_details['licensenumber']			= $remote_property['Property']['LicenseNumber'];
-			$new_property->property_details['lat']						= $remote_property['Property']['Coordinates']['Latitude'];
-			$new_property->property_details['long']						= $remote_property['Property']['Coordinates']['Longitude'];
+			$new_property->property_details['street']					= $remote_property->property_street;
+			$new_property->property_details['postcode']					= $remote_property->property_postcode;
+			$new_property->property_details['email']					= $remote_property->property_email;
+			$new_property->property_details['tel']						= $remote_property->property_tel;
+			$new_property->property_details['licensenumber']			= $remote_property->permit_number;
+			$new_property->property_details['lat']						= $remote_property->lat;
+			$new_property->property_details['long']						= $remote_property->long;
 			$new_property->property_details['image_urls']				= $image_urls;
 			
-			$new_property->property_details['property_checkin_times']	= 
-				jr_gettext('_JOMRES_ACTION_CHECKIN','_JOMRES_ACTION_CHECKIN',false,false)." ".
-				$remote_property['Property']['CheckInOut']['CheckInFrom']." - ". $remote_property['Property']['CheckInOut']['CheckInTo']." ".
-				jr_gettext('_JOMRES_ACTION_CHECKOUT','_JOMRES_ACTION_CHECKOUT',false,false)." ".
-				$remote_property['Property']['CheckInOut']['CheckOutUntil'];
+			$new_property->property_details['property_checkin_times']	= $remote_property->property_checkin_times;
 			
-			$new_property->property_details['property_description']		= $remote_property['Property']['Descriptions']['Description']['Text']." ".$new_property->property_details['property_checkin_times'];
-			
-			$new_property->deposits['remote_deposit_type_id']			= $remote_property['Property']['Deposit'][$atts]['DepositTypeID'];
-			$new_property->deposits['remote_deposit_value'] 			= $remote_property['Property']['Deposit']['value'];
-			
-			$new_property->deposits['remote_security_deposit_type_id']	= $remote_property['Property']['Deposit'][$atts]['DepositTypeID'];
-			$new_property->deposits['remote_security_deposit_value']	= $remote_property['Property']['Deposit']['value'];
-			
-			
-			// Move to tariffs?
-			$new_property->property_details['max_guests']				= $remote_property['Property']['CanSleepMax'];
-			
-			$new_property->remote_room_features				= $property_room_features;
-			$new_property->remote_property_features			= $property_features;
-			
-			
+			$new_property->property_details['property_description']		= $remote_property->property_description;
+
+			// Get the deposit type
+			$remote_deposit_type = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/deposit/type/'.$remote_property_id  , [] , true );
+
+			if ( !isset($remote_deposit_type) || (int)$remote_deposit_type == 0 ) {
+				throw new Exception( "Cannot determine deposit type" );
+			}
+
+			$new_property->deposits['remote_deposit_type_id']			= $remote_deposit_type;
+
+			// Get the deposit value
+			$remote_settings = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/settings/'.$remote_property_id  , [] , true );
+
+			if ( !isset($remote_settings) || !isset( $remote_settings->depositValue ) ) {
+				throw new Exception( "Cannot determine deposit value" );
+			}
+
+			$new_property->deposits['remote_deposit_value'] 			= $remote_settings->depositValue ;
+
+
+			$new_property->property_details['max_guests']				= $max_guests_in_property;
+
+			// Not supported (yet?)
+			//$new_property->remote_room_features						= $property_room_features;
+			$new_property->remote_property_features						= $property_features;
+
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start refactoring that information so that it's useful to Jomres. This will mean connecting to the cmf rest api and determining some extra facts.
 
-			// New we'll pull location information for this property. In RU we are sent the lat/long, we need to re-interpret that to find the country and region id. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
-			
+			// New we'll pull location information for this property. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
+
 			$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'GET' , 'cmf/location/information/'.$new_property->property_details['lat'].'/'.$new_property->property_details['long'].'/' );
 
 			if (!isset($response_location_information->data->response->country_code) || trim($response_location_information->data->response->country_code) == '' ) {
@@ -226,9 +262,17 @@ class channelmanagement_jomres2jomres_import_property
 			
 			if ( !empty($new_property->property_details['image_urls']) ) {
 				foreach ($new_property->property_details['image_urls'] as $image_url ) {
-					channelmanagement_framework_utilities :: get_image ( $image_url ,$new_property_id , 'property' , 0 );
-					
-					channelmanagement_framework_utilities :: get_image ( $image_url ,$new_property_id , 'slideshow' , 0 );
+					if ( isset($new_property->property_details['image_urls']['property'])) {
+						foreach ($new_property->property_details['image_urls']['property'] as $image_url ) {
+							channelmanagement_framework_utilities :: get_image ( $image_url ,$new_property_id , 'property' , 0 );
+						}
+					}
+
+					if ( isset($new_property->property_details['image_urls']['slideshow'])) {
+						foreach ($new_property->property_details['image_urls']['slideshow'] as $image_url ) {
+							channelmanagement_framework_utilities :: get_image ( $image_url ,$new_property_id , 'slideshow' , 0 );
+						}
+					}
 				}
 			}
 			
@@ -238,30 +282,28 @@ class channelmanagement_jomres2jomres_import_property
 			
 			// Check and create settings
 			$settings = array (
-				"property_currencycode"		=> $remote_property['Property'][$atts]['Currency'],  // The property's currency code
+				"property_currencycode"		=> $remote_settings->property_currencycode, // The property's currency code
 				"singleRoomProperty"		=> $mrp_or_srp, // Is the property an MRP or an SRP?
 				"tariffmode" 				=> '2'  // Micromanage automatically
 			);
 			
 			// Room prices
 			
-			jr_import('channelmanagement_rentalsunited_import_prices');
+			jr_import('channelmanagement_jomres2jomres_import_prices');
+
 			// $mrp_or_srp
 			foreach ($property_room_types as $room_type ) {
-				$response = channelmanagement_rentalsunited_import_prices::import_prices( $JRUser->id , $channel , $remote_property_id , $new_property_id , $remote_property['Property']['CanSleepMax'] , $room_type['amenity']->jomres_id );
+				channelmanagement_jomres2jomres_import_prices::import_prices( $JRUser->id , $channel , $remote_property_id , $new_property_id , $max_guests_in_property , $room_type['amenity']->jomres_id );
 
-				// Trying to figure out how many rooms there are in the property.
-				$number_of_rooms = floor( (int)$remote_property['Property']['CanSleepMax'] / (int)$remote_property['Property']['StandardGuests'] );
-				if ( $number_of_rooms == 0 ) {
-					$number_of_rooms = 1;
+				foreach ( $property_room_types as $room_types ) {
+					$data_array = array (
+						"property_uid"	=> $new_property_id,
+						"rooms"			=> json_encode( array($room_types['amenity']))
+					);
+var_dump($data_array);exit;
+					$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
 				}
 
-				$data_array = array (
-					"property_uid"	=> $new_property_id,  
-					"rooms"			=> json_encode( array($room_type))
-				);
-
-				$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
 				
 			}
 			
