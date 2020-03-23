@@ -32,65 +32,38 @@ class channelmanagement_jomres2jomres_import_property
 		$remote_property = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/'.$remote_property_id  , [] , true );
 
 		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
-		if ( (int)$remote_property->published == 1 ) {
+
+		if ( $remote_property != false && (int)$remote_property->published == 1 ) {
 
 			$room_info = json_decode(json_encode($remote_property->room_info), true);
-
-
-/*			array(3) {
-				["rooms"]=>
-  array(2) {
-					[1]=>
-    string(1) "1"
-					[2]=>
-    string(1) "2"
-  }
-  ["rooms_by_type"]=>
-  array(1) {
-					[1]=>
-    array(2) {
-						[0]=>
-      string(1) "1"
-						[1]=>
-      string(1) "2"
-    }
-  }
-  ["room_types"]=>
-  array(1) {
-					[1]=>
-    array(3) {
-						["abbv"]=>
-      string(16) "Room Double beds"
-						["desc"]=>
-      string(0) ""
-						["image"]=>
-      string(10) "double.png"
-    }
-  }
-}*/
-
 			// room types
 			$property_room_types = array();
 			$max_guests_in_property = 0;
-				foreach ($room_info['room_types'] as $remote_type_id => $remote_type_details ) {
-					if ( isset($mapped_dictionary_items['_cmf_list_room_types']) && !empty($mapped_dictionary_items['_cmf_list_room_types']) ) {
-						foreach ($mapped_dictionary_items['_cmf_list_room_types'] as $mapped_item) {
-							if ( $mapped_item->remote_item_id == $remote_type_id ) {
-								$arr = $mapped_dictionary_items['_cmf_list_room_types'][$remote_type_id];
-								$count = 0;
+			foreach ($room_info['room_types'] as $remote_type_id => $remote_type_details ) {
+				if ( isset($mapped_dictionary_items['_cmf_list_room_types']) && !empty($mapped_dictionary_items['_cmf_list_room_types']) ) {
+					foreach ($mapped_dictionary_items['_cmf_list_room_types'] as $mapped_item) {
+						if ( $mapped_item->remote_item_id == $remote_type_id ) {
+							$arr = $mapped_dictionary_items['_cmf_list_room_types'][$remote_type_id];
+							$count = 0;
 
-								foreach ($room_info['rooms_max_people'][$remote_type_id] as $a) { // Not sure yet if I need count
-									$count = $count + $a;
-									$max_guests = $a;
-									$max_guests_in_property = $max_guests_in_property + $a;
-								}
-							$property_room_types[] = array("amenity" => $arr, "count" => $count, "max_guests" => $max_guests);
+							foreach ($room_info['rooms_max_people'][$remote_type_id] as $a) { // Not sure yet if I need count
+								$count = $count + $a;
+								$max_guests = $a;
+								$max_guests_in_property = $max_guests_in_property + $a;
 							}
+							$property_room_types[] = array("amenity" => $arr, "count" => $count, "max_guests" => $max_guests);
 						}
 					}
 				}
-				$property_room_types = array_unique($property_room_types, SORT_REGULAR);
 			}
+			$property_room_types = array_unique($property_room_types, SORT_REGULAR);
+
+			$room_types = array();
+			foreach ($property_room_types as $prt ) {
+
+				$room_types[] = json_encode($prt);
+			}
+		}
 
             // room features
 			// Not supported yet
@@ -112,7 +85,8 @@ class channelmanagement_jomres2jomres_import_property
 
 			// Property features
 			$property_features = array();
-			if ( $remote_property->property_features != '' ) {
+
+			if ( isset($remote_property->property_features) && $remote_property->property_features != '' ) {
 				$bang = explode ( "," , $remote_property->property_features );
 				if (!empty($bang)) {
 					foreach ($bang as $remote_property_feature_id ) {
@@ -293,18 +267,23 @@ class channelmanagement_jomres2jomres_import_property
 
 			// $mrp_or_srp
 			foreach ($property_room_types as $room_type ) {
-				channelmanagement_jomres2jomres_import_prices::import_prices( $JRUser->id , $channel , $remote_property_id , $new_property_id , $max_guests_in_property , $room_type['amenity']->jomres_id );
 
-				foreach ( $property_room_types as $room_types ) {
+				// First we need rooms, once they are added we can create tariffs
+				foreach ( $room_types as $room_type ) {
+
 					$data_array = array (
 						"property_uid"	=> $new_property_id,
-						"rooms"			=> json_encode( array($room_types['amenity']))
+						"rooms"			=> json_encode( array( json_decode($room_type)))
 					);
-var_dump($data_array);exit;
+
 					$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/rooms/' , $data_array );
+
+					$rt = json_decode($room_type);
+
+					// now that we have rooms in the system, we can set the base price for each room type
+					channelmanagement_jomres2jomres_import_prices::import_prices( $JRUser->id , $channel , $remote_property_id , $new_property_id , $max_guests_in_property , $rt->amenity->jomres_id );
 				}
 
-				
 			}
 			
 			/* 
@@ -315,8 +294,10 @@ var_dump($data_array);exit;
 			<DepositType DepositTypeID="5">Flat amount per stay</DepositType> 
 			*/
 
-			$deposit_type	= $remote_property['Property']['Deposit'][$atts]['DepositTypeID'];
-			$deposit_value	= $remote_property['Property']['Deposit']['value'];
+
+
+			$deposit_type	= $new_property->deposits['remote_deposit_type_id'];
+			$deposit_value	= $new_property->deposits['remote_deposit_value'] ;
 			
 			switch ($deposit_type) {
 				case 1:
@@ -426,7 +407,7 @@ var_dump($data_array);exit;
 				"property_uid"			=> $new_property_id
 			);
 			$property_status_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/status/' , $data_array );
-			
+			var_dump($property_status_response);exit;
 			if (isset($property_status_response->data->response) && (int)$property_status_response->data->response->status_code == 2 ) {
 				$data_array = array (
 					"property_uid"			=> $new_property_id

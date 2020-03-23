@@ -49,6 +49,10 @@ class channelmanagement_jomres2jomres_communication
 	
 	public function communicate( $method = 'GET' , $endpoint = '' , $putpost = [] , $clear_cache = false )
 	{
+		if (substr($endpoint , 0, 1) !== '/') { // I got fed up with endpoints failing because I confused myself with slashes not being in place
+			$endpoint = "/".$endpoint;
+		}
+
 		// Webhook events will use this method, but we don't (?) want to cache the messages so we'll not cache them
 		$method_can_be_cached = true;
 
