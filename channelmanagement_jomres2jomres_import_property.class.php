@@ -18,8 +18,7 @@ class channelmanagement_jomres2jomres_import_property
 	
 	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
 	{
-
-		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton'); 
+		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
 
 		$mapped_dictionary_items = channelmanagement_framework_utilities :: get_mapped_dictionary_items ( $channel , $mapped_to_jomres_only = true );
@@ -403,19 +402,30 @@ class channelmanagement_jomres2jomres_import_property
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/features/' , $data_array );
 			
 			// Publishing
+
+			// We need to force a status review, where the system will see if the property is complete. If it is, we can publish it
+
 			$data_array = array (
 				"property_uid"			=> $new_property_id
 			);
-			$property_status_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/status/' , $data_array );
-			var_dump($property_status_response);exit;
-			if (isset($property_status_response->data->response) && (int)$property_status_response->data->response->status_code == 2 ) {
-				$data_array = array (
-					"property_uid"			=> $new_property_id
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/publish/' , $data_array );
+
+			$property_status_review_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/status/review/', $data_array );
+
+			if ($property_status_review_response->data->response->property_complete == true ) {
+
+				$property_status_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'GET' , 'cmf/property/status/'.$new_property_id , array() );
+
+				if (isset($property_status_response->data->response) && (int)$property_status_response->data->response->status_code == 2 ) {
+					$data_array = array (
+						"property_uid"			=> $new_property_id
+					);
+					$property_publish_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/publish' , $data_array );
+				}
+
+				return (object) array ( "success" => true , "new_property_id" =>  $new_property_id );
+			} else {
+				return (object) array ( "success" => false , "message" =>  "Property appeared to be created but is incomplete." );
 			}
-			
-			return (object) array ( "success" => true , "new_property_id" =>  $new_property_id );
 		}
 	}
 	
