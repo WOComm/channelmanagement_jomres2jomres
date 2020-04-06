@@ -21,11 +21,21 @@ class j21300channelmanagement_jomres2jomres_account_form_fields {
 			{
 			$this->template_touchable=false; return;
 			}
+
+		// Currently Jomres2jomres uses the configuration details (I.E the client secret and id) stored in the admin area to talk to the parent server. There's no "need" at this time for child site managers to enter their own details
+		return;
+		
 		$channel_name = 'jomres2jomres';
 		
 		$channel_form_fields = get_showtime('channel_form_fields');
 		
-		$channel_form_fields[$channel_name] = array ( 
+		$channel_form_fields[$channel_name] = array (
+			"channel_management_jomres2jomres_parent_site" =>
+				array (
+					"type" => "input" ,
+					"field_title" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_TITLE', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_TITLE', false),
+					"field_help" => jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_DESC', 'CHANNELMANAGEMENT_JOMRES2JOMRES_PARENTSITE_DESC', false),
+				),
 			"channel_management_jomres2jomres_username" =>
 				array (
 					"type" => "input" , 

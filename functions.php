@@ -12,23 +12,32 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-function get_remote_admin_uri_jomres2jomres( $remote_uid = 0 )
+function get_remote_admin_uri_jomres2jomres( $remote_url = '' , $remote_uid = 0 )
 {
-	return "https://new.rentalsunited.com/MyProperties/Edit/".$remote_uid."#step-1";
+	if ( trim($remote_url) == '' ) {
+		throw new Exception( 'Remote url not set' );
+	}
+
+	if ( (int)$remote_uid == 0 ) {
+		throw new Exception( 'Remote uid not set' );
+	}
+
+	$management_url = $remote_url."/index.php?option=com_jomres&task=dashboard&thisProperty=".$remote_uid;
+	return $management_url;
 }
 
 
 function cmf_jomres2jomres_save_plugin_setting ( $user_id = 0 , $host = '' , $key = '' , $value = '')
 {
 	if ( trim($host) == '' ) {
-		throw new Exception( '' );
+		throw new Exception( 'Host not set' );
 	}
 
 	if ( trim($key) == '' ) {
-		throw new Exception( '' );
+		throw new Exception( 'Key not set' );
 	}
 	if ( trim($value) == '' ) {
-		throw new Exception( '' );
+		throw new Exception( 'Value not set' );
 	}
 
 	$query = "SELECT `value` FROM #__jomres_pluginsettings WHERE `prid` = 0 AND `plugin` = 'jomres2jomres' LIMIT 1 ";

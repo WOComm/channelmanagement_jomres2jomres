@@ -28,6 +28,8 @@ class channelmanagement_jomres2jomres_import_property
 
         set_showtime("property_managers_id" , $JRUser->id );
 
+		$remote_url = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/url' , [] , true );
+
 		$remote_property = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/'.$remote_property_id  , [] , true );
 
 		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
@@ -35,6 +37,7 @@ class channelmanagement_jomres2jomres_import_property
 		if ( $remote_property != false && (int)$remote_property->published == 1 ) {
 
 			$room_info = json_decode(json_encode($remote_property->room_info), true);
+
 			// room types
 			$property_room_types = array();
 			$max_guests_in_property = 0;
@@ -55,6 +58,7 @@ class channelmanagement_jomres2jomres_import_property
 					}
 				}
 			}
+
 			$property_room_types = array_unique($property_room_types, SORT_REGULAR);
 
 			$room_types = array();
@@ -62,6 +66,9 @@ class channelmanagement_jomres2jomres_import_property
 
 				$room_types[] = json_encode($prt);
 			}
+
+		}  else {
+			return (object)array("success" => false, "message" => "Could not get property from remote server ");
 		}
 
             // room features
@@ -86,16 +93,19 @@ class channelmanagement_jomres2jomres_import_property
 			$property_features = array();
 
 			if ( isset($remote_property->property_features) && $remote_property->property_features != '' ) {
-				$bang = explode ( "," , $remote_property->property_features );
+
+				$bang = explode(",", $remote_property->property_features);
+
 				if (!empty($bang)) {
-					foreach ($bang as $remote_property_feature_id ) {
-						foreach ( $mapped_dictionary_items['_cmf_list_property_features'] as $mapped_property_feature ) {
-							if ( $mapped_property_feature->jomres_id == $remote_property_feature_id ) {
+					foreach ($bang as $remote_property_feature_id) {
+						foreach ($mapped_dictionary_items['_cmf_list_property_features'] as $mapped_property_feature) {
+							if ($mapped_property_feature->jomres_id == $remote_property_feature_id) {
 								$property_features[] = $mapped_property_feature; // Don't really need all of this var's details, but it makes tracing it thru the system heckin' easier because my brain is fried by the coronavirus worries
 							}
 						}
 					}
 				}
+			}
 
 			// Find the local property type for this property
 
@@ -135,11 +145,12 @@ class channelmanagement_jomres2jomres_import_property
 					}
 				}
 			}
+
 			if (!empty($image_info['slideshow'])) {
 				foreach ($image_info['slideshow'] as $images ) {
 					if ( !empty($images) ) {
 						foreach ( $images as $image ) {
-							$image_urls['slideshow'][] = $image['image_relative_path'].$image['large'];
+							$image_urls['slideshow'][] = $image_info['image_relative_path'].$image['large'];
 						}
 					}
 				}
@@ -191,11 +202,8 @@ class channelmanagement_jomres2jomres_import_property
 			//$new_property->remote_room_features						= $property_room_features;
 			$new_property->remote_property_features						= $property_features;
 
-			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start refactoring that information so that it's useful to Jomres. This will mean connecting to the cmf rest api and determining some extra facts.
 
 			// New we'll pull location information for this property. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
-
 			$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'GET' , 'cmf/location/information/'.$new_property->property_details['lat'].'/'.$new_property->property_details['long'].'/' );
 
 			if (!isset($response_location_information->data->response->country_code) || trim($response_location_information->data->response->country_code) == '' ) {
@@ -205,8 +213,11 @@ class channelmanagement_jomres2jomres_import_property
 			if (!isset($response_location_information->data->response->region_id) || trim($response_location_information->data->response->region_id) == '' ) {
 				throw new Exception( jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND','CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND',false) );
 			}
-			
-			$new_property_basics_array =  array (
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start creating our new property
+
+		$new_property_basics_array =  array (
 				"property_name" => $new_property->property_details['name'] , 
 				"remote_uid" => $new_property->property_details['property_id'] ,  
 				"country" => $response_location_information->data->response->country_code ,  
@@ -228,7 +239,7 @@ class channelmanagement_jomres2jomres_import_property
 			// Management url
 			$data_array = array (
 				"property_uid"			=> $new_property_id,  
-				"management_url"			=> get_remote_admin_uri_rentalsunited(  $remote_property_id ) 
+				"management_url"			=> get_remote_admin_uri_jomres2jomres(  $remote_url , $remote_property_id )
 			);
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/management/url' , $data_array );
 			
@@ -378,7 +389,7 @@ class channelmanagement_jomres2jomres_import_property
 				"postcode"		=> ' '
 			);
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/address/' , $data_array );
-			
+
 			// Stars
 			$data_array = array (
 				"property_uid"			=> $new_property_id,  
@@ -427,7 +438,7 @@ class channelmanagement_jomres2jomres_import_property
 				return (object) array ( "success" => false , "message" =>  "Property appeared to be created but is incomplete." );
 			}
 		}
-	}
+
 	
 	
  	// Pass the OTA prop type, 

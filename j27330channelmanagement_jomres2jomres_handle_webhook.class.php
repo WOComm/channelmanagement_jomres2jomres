@@ -47,23 +47,26 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 		// This script will collate and send information to the remote site using the authentication information provided in the componentArgs variable.
 		$ePointFilepath=get_showtime('ePointFilepath');
 
-		/*jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
-		$event_trigger_crossref = new channelmanagement_rentalsunited_push_event_trigger_crossref();
+		jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
+		$event_trigger_crossref = new channelmanagement_jomres2jomres_push_event_trigger_crossref();
 
 		$push_events = $event_trigger_crossref->events;
 		$webhook_event = $componentArgs['webhook_notification']->webhook_event;
 		$channel_data = $componentArgs['channel_data'];
 		$managers = $componentArgs['managers'];
 
-		if ( isset($push_events[$webhook_event]) ) {
+		if ( isset($push_events[$webhook_event]) && !empty($push_events[$webhook_event]) ) {
+
 			$push_tasks = $push_events[$webhook_event];
+
 			if (!empty($push_tasks) ) {
 				foreach ( $push_tasks as $task ) {
-					$file_name = $ePointFilepath.'xml_'.$task.'.php';
+					$file_name = $ePointFilepath.'jomres2jomres_webhookevent_'.$task.'.php';
 
                     try {
                         if (file_exists($file_name)) {
-                            $class_name = $task;
+                            $class_name = 'jomres2jomres_webhookevent_'.$task;
+
                             logging::log_message("About to run class : " .$class_name, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
                             require_once($file_name);
                             $new_class = new $class_name();
@@ -76,7 +79,7 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 				}
 			}
 		}
-		logging::log_message("Completed RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );*/
+		logging::log_message("Completed RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
 	}
 
 	public function getRetVals()
