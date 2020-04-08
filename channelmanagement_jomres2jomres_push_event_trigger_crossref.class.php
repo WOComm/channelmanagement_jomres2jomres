@@ -56,7 +56,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'invoice_cancelled'			=> [  ],
 			'invoice_saved'				=> [  ],
 			'property_added'			=> [  ],   
-			'property_deleted'			=> [  ],
+			'property_deleted'			=> [ 'property_deleted' ],
 			'property_published'		=> [  ],
 			'property_settings_updated'	=> [  ],
 			'property_unpublished'		=> [  ],

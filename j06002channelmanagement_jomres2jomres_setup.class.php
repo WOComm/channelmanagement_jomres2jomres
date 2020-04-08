@@ -26,12 +26,10 @@ class j06002channelmanagement_jomres2jomres_setup {
 		$current_channel = channelmanagement_framework_utilities :: get_current_channel ( $this , array ( "j06002channelmanagement_" , "_setup" ) );
 		
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
-		
-		$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel( $current_channel );
 
 		$output = array();
 		$pageoutput = array();
-			
+
 		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_TITLE',false);
 		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_MESSAGE',false);
 		$output['CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT'] = jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT','CHANNELMANAGEMENT_JOMRES2JOMRES_SETUP_INITIALISE_BUTTON_IMPORT',false);
