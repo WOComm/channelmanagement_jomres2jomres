@@ -276,7 +276,7 @@ class channelmanagement_jomres2jomres_import_property
 			jr_import('channelmanagement_jomres2jomres_import_prices');
 
 			// $mrp_or_srp
-			foreach ($property_room_types as $room_type ) {
+			foreach ($property_room_types as $room_types ) {
 
 				// First we need rooms, once they are added we can create tariffs
 				foreach ( $room_types as $room_type ) {
@@ -358,7 +358,7 @@ class channelmanagement_jomres2jomres_import_property
 			// Contacts
 			$data_array = array (
 				"property_uid"		=> $new_property_id,  
-				"telephone"			=>$new_property->property_details['tel'],
+				"telephone"			=> $new_property->property_details['tel'],
 				"fax" 				=> '',
 				"email" 			=> $new_property->property_details['email']
 			);
