@@ -239,7 +239,7 @@ class channelmanagement_jomres2jomres_import_property
 			// Management url
 			$data_array = array (
 				"property_uid"			=> $new_property_id,  
-				"management_url"			=> get_remote_admin_uri_jomres2jomres(  $remote_url , $remote_property_id )
+				"management_url"			=> $remote_url.'/index.php?option=com_jomres&task=dashboard&thisProperty='. $new_property_id
 			);
 			$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/management/url' , $data_array );
 			

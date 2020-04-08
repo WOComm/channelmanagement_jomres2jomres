@@ -12,20 +12,6 @@
 defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
 // ################################################################
 
-function get_remote_admin_uri_jomres2jomres( $remote_url = '' , $remote_uid = 0 )
-{
-	if ( trim($remote_url) == '' ) {
-		throw new Exception( 'Remote url not set' );
-	}
-
-	if ( (int)$remote_uid == 0 ) {
-		throw new Exception( 'Remote uid not set' );
-	}
-
-	$management_url = $remote_url."/index.php?option=com_jomres&task=dashboard&thisProperty=".$remote_uid;
-	return $management_url;
-}
-
 
 function cmf_jomres2jomres_save_plugin_setting ( $user_id = 0 , $host = '' , $key = '' , $value = '')
 {
