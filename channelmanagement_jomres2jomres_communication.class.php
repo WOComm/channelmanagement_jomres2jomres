@@ -216,15 +216,10 @@ class channelmanagement_jomres2jomres_communication
 				];
 				$client = new \GuzzleHttp\Client(["base_uri" => $this->url]);
 
-				$response = $client->post($this->path.'/', $options);
+				$response = $client->post($this->path.'/', $options);*/
 
-				var_dump($response->getBody());exit;*/
 			}
 			catch (Exception $e) {
-				echo "Failed to get response from channel
-					";
-
-				var_dump($e->getMessage());exit;
 				logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
 				return false;
 			}
