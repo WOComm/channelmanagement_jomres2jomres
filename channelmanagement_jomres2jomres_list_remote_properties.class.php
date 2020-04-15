@@ -35,44 +35,47 @@ class channelmanagement_jomres2jomres_list_remote_properties
 		$endpoint = '/cmf/properties/all';
 
 		$response = $channelmanagement_jomres2jomres_communication->communicate( "GET" , $endpoint , [] , false );
+
 		if (!empty($response) ) {
 
 			foreach ($response as $r) {
 				try {
-					$new_arr = array (
-						"remote_property_id"			=> '',
-						"remote_property_name"			=> '',
-						"remote_property_town"			=> '',
-						"remote_property_region"		=> '',
-						"remote_property_country"		=> '',
-						"remote_property_type_title"	=> ''
-					);
+					if ($r->api_privacy_off == 1 ) {
+						$new_arr = array(
+							"remote_property_id" => '',
+							"remote_property_name" => '',
+							"remote_property_town" => '',
+							"remote_property_region" => '',
+							"remote_property_country" => '',
+							"remote_property_type_title" => ''
+						);
 
-					if ( !isset($r->property_id) ) {
-						throw new Exception('Property uid not passed');
-					}
+						if (!isset($r->property_id)) {
+							throw new Exception('Property uid not passed');
+						}
 
-					if ( !isset($r->property_name) ) {
-						throw new Exception('Property name not passed');
-					}
+						if (!isset($r->property_name)) {
+							throw new Exception('Property name not passed');
+						}
 
-					$new_arr['remote_property_id'] = $r->property_id;
-					$new_arr['remote_property_name'] = $r->property_name;
+						$new_arr['remote_property_id'] = $r->property_id;
+						$new_arr['remote_property_name'] = $r->property_name;
 
-					if ( isset($r->property_town)) {
-						$new_arr['remote_property_town'] = $r->property_town;
-					}
-					if ( isset($r->property_region) ) {
-						$new_arr['remote_property_region'] = $r->property_region;
-					}
-					if ( isset($r->property_country) ) {
-						$new_arr['remote_property_country'] = $r->property_country;
-					}
-					if ( isset($r->property_type_title) ) {
-						$new_arr['remote_property_type_title'] = $r->property_type_title;
-					}
+						if (isset($r->property_town)) {
+							$new_arr['remote_property_town'] = $r->property_town;
+						}
+						if (isset($r->property_region)) {
+							$new_arr['remote_property_region'] = $r->property_region;
+						}
+						if (isset($r->property_country)) {
+							$new_arr['remote_property_country'] = $r->property_country;
+						}
+						if (isset($r->property_type_title)) {
+							$new_arr['remote_property_type_title'] = $r->property_type_title;
+						}
 
-					$remote_property_ids[] = $new_arr;
+						$remote_property_ids[] = $new_arr;
+					}
 				} catch (Exception $e) {
 					var_dump($e->getMessage());exit;
 				}
