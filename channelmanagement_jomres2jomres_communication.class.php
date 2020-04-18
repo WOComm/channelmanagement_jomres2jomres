@@ -104,9 +104,7 @@ class channelmanagement_jomres2jomres_communication
 
 			if ( $method == 'POST' ||  $method == 'PUT' ) {
 				$options = [
-					'query' => [
-						$putpost
-					],
+					'form_params' => $putpost,
 				];
 			} else {
 				$options = [];

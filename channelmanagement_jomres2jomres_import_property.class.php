@@ -24,13 +24,13 @@ class channelmanagement_jomres2jomres_import_property
 		$mapped_dictionary_items = channelmanagement_framework_utilities :: get_mapped_dictionary_items ( $channel , $mapped_to_jomres_only = true );
 
         jr_import('channelmanagement_jomres2jomres_communication');
-        $channelmanagement_jomres2jomres_communication = new channelmanagement_jomres2jomres_communication();
+        $remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
         set_showtime("property_managers_id" , $JRUser->id );
 
-		$remote_url = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/url' , [] , true );
+		$remote_url = $remote_server_communication->communicate( "GET" , '/cmf/url' , [] , true );
 
-		$remote_property = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/'.$remote_property_id  , [] , true );
+		$remote_property = $remote_server_communication->communicate( "GET" , '/cmf/property/'.$remote_property_id  , [] , true );
 
 		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
 
@@ -178,7 +178,7 @@ class channelmanagement_jomres2jomres_import_property
 			$new_property->property_details['property_description']		= $remote_property->property_description;
 
 			// Get the deposit type
-			$remote_deposit_type = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/deposit/type/'.$remote_property_id  , [] , true );
+			$remote_deposit_type = $remote_server_communication->communicate( "GET" , '/cmf/property/deposit/type/'.$remote_property_id  , [] , true );
 
 			if ( !isset($remote_deposit_type) || (int)$remote_deposit_type == 0 ) {
 				throw new Exception( "Cannot determine deposit type" );
@@ -187,7 +187,7 @@ class channelmanagement_jomres2jomres_import_property
 			$new_property->deposits['remote_deposit_type_id']			= $remote_deposit_type;
 
 			// Get the deposit value
-			$remote_settings = $channelmanagement_jomres2jomres_communication->communicate( "GET" , '/cmf/property/settings/'.$remote_property_id  , [] , true );
+			$remote_settings = $remote_server_communication->communicate( "GET" , '/cmf/property/settings/'.$remote_property_id  , [] , true );
 
 			if ( !isset($remote_settings) || !isset( $remote_settings->depositValue ) ) {
 				throw new Exception( "Cannot determine deposit value" );

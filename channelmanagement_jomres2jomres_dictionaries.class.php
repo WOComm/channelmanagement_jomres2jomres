@@ -47,7 +47,7 @@ class channelmanagement_jomres2jomres_dictionaries
 
 		if (!empty($dictionary_array)) {
             jr_import('channelmanagement_jomres2jomres_communication');
-            $channelmanagement_jomres2jomres_communication = new channelmanagement_jomres2jomres_communication();
+            $remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
 			foreach ($dictionary_array as $dictionary) {
 
@@ -55,7 +55,7 @@ class channelmanagement_jomres2jomres_dictionaries
 
 					$endpoint = str_replace ( "_" , "/" , $dictionary );
 
-					$response = $channelmanagement_jomres2jomres_communication->communicate( "GET" , $endpoint , [] , false );
+					$response = $remote_server_communication->communicate( "GET" , $endpoint , [] , false );
 
 					$item_type = $mappable_item_types[$dictionary];
 
@@ -75,10 +75,10 @@ class channelmanagement_jomres2jomres_dictionaries
 						$remote_item_id = $item->$remote_attribute_id;
 						$remote_item_name = $item->$remote_value_name_element;
 
-						$xml_attributes = new stdClass();
-						@$xml_attributes->xml_attributes->$remote_attribute_id = $remote_item_id;
-						$xml_attributes->value = $remote_item_name;
-						$contents->$type->$sub_type [] = $xml_attributes;
+						$attributes = new stdClass();
+						@$attributes->xml_attributes->$remote_attribute_id = $remote_item_id;
+						$attributes->value = $remote_item_name;
+						$contents->$type->$sub_type [] = $attributes;
 
 					}
 
