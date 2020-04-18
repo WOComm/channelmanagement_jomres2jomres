@@ -43,7 +43,10 @@ class jomres2Jomres_webhookevent_booking_added
 		// var_dump($managers);exit;
         //var_dump($managers);exit;
 		// We need the manager's id, if we can't find it we'll back out
-        $first_managers_id = array_key_first ($managers);
+
+		reset($managers);
+		$first_managers_id = key($managers);
+
         if ( !isset($managers[$first_managers_id]['user_id']) ||  $managers[$first_managers_id]['user_id'] == 0 ) {
             throw new Exception ( "Cannot identify property manager's id");
         }
@@ -154,43 +157,15 @@ class jomres2Jomres_webhookevent_booking_added
 		$reservations->reservations[0]['referrer']					= $booking_data_response->data->response[0]->referrer." :: ".get_showtime("live_site");
 		$reservations->reservations[0]['guest_info'] = $guest_info;
 
-		// We don't currently allow a child site to connect to more than one parent site, so there's no need to user the manager's login details (Todo : fix so that property managers use own accounts on parent server)
-
 		jr_import('channelmanagement_jomres2jomres_communication');
-		$channelmanagement_jomres2jomres_communication = new channelmanagement_jomres2jomres_communication();
+		$remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
 		$data_array = array (
 			"reservations"		=> json_encode($reservations)
 		);
-		var_dump(json_encode($reservations));exit;
-		$response = $channelmanagement_jomres2jomres_communication->communicate( "PUT" , 'cmf/reservations/add' , $data_array , true );
 
-
-		var_dump($response );exit;
-
-       // $notification = $this->channelmanagement_jomres2jomres_communication->communicate( 'cmf/reservations/add' , json_encode($reservations) );
-
-        if ( isset($notification['ReservationID']) && $notification['ReservationID'] > 0) {
-
-			$data_array = array (
-                "property_uid"			=> $data->property_uid,
-                "remote_booking_id"		=> $notification['ReservationID'],
-                "local_booking_id"		=> $data->contract_uid
-            );
-
-            $response = $channelmanagement_framework_singleton->rest_api_communicate( $this_channel , 'PUT' , 'cmf/property/booking/link' , $data_array );
-
-            $message = "Forwarded booking to channel : ".serialize($notification);
-            logging::log_message($message, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'INFO');
-
-
-
-        } else {
-            $message = "Failed to forward booking to channel, response from channel : ".serialize($notification);
-            logging::log_message($message, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR');
-        }
-
-        return $xml;
+		$response = $remote_server_communication->communicate( "PUT" , 'cmf/reservations/add' , $data_array , true );
+		return $response;
 	}
 }
 
@@ -423,16 +398,6 @@ class jomres2Jomres_webhookevent_booking_added
         }
       }
     }
-  }
-  ["jomres_encryption"]=>
-  object(jomres_encryption)#595 (2) {
-    ["encryption_key":"jomres_encryption":private]=>
-    object(Defuse\Crypto\Key)#532 (1) {
-      ["key_bytes":"Defuse\Crypto\Key":private]=>
-      string(32) "�4lBWꚴ$�$�"���9�����&�}���"
-    }
-    ["key_location"]=>
-    string(50) "/home/vince/html/jomres.development/public/jomres/"
   }
 }
 

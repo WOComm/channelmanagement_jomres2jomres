@@ -26,7 +26,7 @@ class channelmanagement_jomres2jomres_list_remote_properties
 
         jr_import('channelmanagement_jomres2jomres_communication');
 
-		$channelmanagement_jomres2jomres_communication = new channelmanagement_jomres2jomres_communication($JRUser->id);
+		$remote_server_communication = new channelmanagement_jomres2jomres_communication($JRUser->id);
 
         set_showtime("property_managers_id" ,  $JRUser->id );
 
@@ -34,7 +34,7 @@ class channelmanagement_jomres2jomres_list_remote_properties
 
 		$endpoint = '/cmf/properties/all';
 
-		$response = $channelmanagement_jomres2jomres_communication->communicate( "GET" , $endpoint , [] , false );
+		$response = $remote_server_communication->communicate( "GET" , $endpoint , [] , false );
 
 		if (!empty($response) ) {
 
