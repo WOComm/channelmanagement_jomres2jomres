@@ -118,7 +118,7 @@ class channelmanagement_jomres2jomres_communication
 			";
 
             var_dump($e->getMessage());exit;
-			logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
+			logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CMF', 'ERROR' , "rentalsunited" );
 			return false;
 		}
 
@@ -218,7 +218,7 @@ class channelmanagement_jomres2jomres_communication
 
 			}
 			catch (Exception $e) {
-				logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
+				logging::log_message("Failed to get response from channel manager ".$this->url.$this->path." Message ".$e->getMessage(), 'CMF', 'ERROR' , "rentalsunited" );
 				return false;
 			}
 		}
@@ -263,11 +263,7 @@ class channelmanagement_jomres2jomres_communication
 			}
 		}
 		catch (Exception $e) {
-			echo "Failed to get response from channel
-			";
-
-			var_dump($e->getMessage());exit;
-			logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , "rentalsunited" );
+			logging::log_message("Failed to get response from channel manager ".$this->url.$this->path.$endpoint.". Message ".$e->getMessage(), 'CMF', 'ERROR' , "rentalsunited" );
 			return false;
 		}
 	}

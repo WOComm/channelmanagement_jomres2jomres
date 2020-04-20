@@ -42,7 +42,7 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 		
 		$this_channel = 'jomres2jomres';
 
-        logging::log_message("Starting RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
+        logging::log_message("Starting Jomres2Jomres 27330 webhook handling" , 'CMF', 'DEBUG' , '' );
 
 		// This script will collate and send information to the remote site using the authentication information provided in the componentArgs variable.
 		$ePointFilepath=get_showtime('ePointFilepath');
@@ -55,31 +55,37 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 		$channel_data = $componentArgs['channel_data'];
 		$managers = $componentArgs['managers'];
 
+		logging::log_message("For Jomres2Jomres 27330 webhook handling found manager data : ".serialize($managers) , 'CMF', 'DEBUG' , '' );
+
 		if ( isset($push_events[$webhook_event]) && !empty($push_events[$webhook_event]) ) {
 
 			$push_tasks = $push_events[$webhook_event];
 
 			if (!empty($push_tasks) ) {
 				foreach ( $push_tasks as $task ) {
+
+					set_showtime("current_webhook_task" , $task );
+
 					$file_name = $ePointFilepath.'jomres2jomres_webhookevent_'.$task.'.php';
 
                     try {
                         if (file_exists($file_name)) {
                             $class_name = 'jomres2jomres_webhookevent_'.$task;
 
-                            logging::log_message("About to run class : " .$class_name, 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
+                            logging::log_message(get_showtime("current_webhook_task")." -- "."About to run class : " .$class_name." for channel ".$this_channel, 'CMF', 'DEBUG' , '' );
                             require_once($file_name);
                             $new_class = new $class_name();
                             $new_class->trigger_event($webhook_event , $componentArgs['webhook_notification']->data , $channel_data , $managers , $this_channel );
                             unset($new_class);
                         }
                     } catch (Exception $e) {
-                        logging::log_message("Failed to send notification to remote channel, failed with message ".$e->getMessage() , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'ERROR' , '' );
+                        logging::log_message(get_showtime("current_webhook_task")." -- "."Failed to send notification to remote channel, failed with message ".$e->getMessage() , 'CMF', 'ERROR' , '' );
+						logging::log_message(get_showtime("current_webhook_task")." -- "."Failure backtrace ".$e->getTraceAsString() , 'CMF', 'ERROR' , '' );
                     }
 				}
 			}
 		}
-		logging::log_message("Completed RU 27330 webhook handling" , 'CHANNEL_MANAGEMENT_FRAMEWORK', 'DEBUG' , '' );
+		logging::log_message("Completed Jomres2Jomres 27330 webhook handling" , 'CMF', 'DEBUG' , '' );
 	}
 
 	public function getRetVals()

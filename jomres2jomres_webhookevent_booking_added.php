@@ -36,20 +36,15 @@ class jomres2Jomres_webhookevent_booking_added
 			}
 		}
 
-        $ePointFilepath=get_showtime('ePointFilepath');
+		logging::log_message(get_showtime("current_webhook_task")." -- "."Sending a booking to remote server" , 'CMF', 'DEBUG' , '' );
+
+		$ePointFilepath=get_showtime('ePointFilepath');
 
         // var_dump($data);exit;
 		// var_dump($channel_data);exit;
 		// var_dump($managers);exit;
         //var_dump($managers);exit;
 		// We need the manager's id, if we can't find it we'll back out
-
-		reset($managers);
-		$first_managers_id = key($managers);
-
-        if ( !isset($managers[$first_managers_id]['user_id']) ||  $managers[$first_managers_id]['user_id'] == 0 ) {
-            throw new Exception ( "Cannot identify property manager's id");
-        }
 
         if ( !isset($data->property_uid) || $data->property_uid == 0 ) {
             throw new Exception ( "Property uid not set");
@@ -59,9 +54,11 @@ class jomres2Jomres_webhookevent_booking_added
             throw new Exception ( "Contract uid not set");
         }
 
+		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
 
-        $channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
-        $response = $channelmanagement_framework_singleton->rest_api_communicate( $this_channel , 'GET' , 'cmf/properties/ids');
+		$response = $channelmanagement_framework_singleton->rest_api_communicate( $this_channel , 'GET' , 'cmf/properties/ids');
+
+		logging::log_message(get_showtime("task")." -- "."After trying to find property ids on the local system : ".serialize($response) , 'CMF', 'DEBUG' , '' );
 
         if (!isset($response->data->response)) {
             throw new Exception ( "Channel not associated with any properties or api failed to connect");
@@ -165,6 +162,10 @@ class jomres2Jomres_webhookevent_booking_added
 		);
 
 		$response = $remote_server_communication->communicate( "PUT" , 'cmf/reservations/add' , $data_array , true );
+
+		logging::log_message(get_showtime("current_webhook_task")." -- "."Response from  sending a booking to the remote service : ".serialize($response) , 'CMF', 'DEBUG' , '' );
+
+
 		return $response;
 	}
 }
