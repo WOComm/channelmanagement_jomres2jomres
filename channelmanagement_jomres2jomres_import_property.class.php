@@ -330,15 +330,9 @@ class channelmanagement_jomres2jomres_import_property
 				}
 
 				$post_data = array("property_uid" => $new_property_id, "params" => json_encode($settings)); // mrConfig array values are property specific settings
-				$response_validated = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'POST', 'cmf/property/validate/settings/keys', $post_data);
 
-				if (!isset($response_validated->data->response->valid) || $response_validated->data->response->valid == false) {
-					throw new Exception(jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED', 'CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_VALIDATE_SETTINGS_FAILED', false));
-				}
+				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/settings', $post_data);
 
-				if ($response_validated == true) {
-					$response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/settings', $post_data);
-				}
 
 				// Now that we have a new property setup, let's start adding it's various information items.
 
