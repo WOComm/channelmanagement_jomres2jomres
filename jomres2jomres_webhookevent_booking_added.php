@@ -43,7 +43,6 @@ class jomres2Jomres_webhookevent_booking_added
         // var_dump($data);exit;
 		// var_dump($channel_data);exit;
 		// var_dump($managers);exit;
-        //var_dump($managers);exit;
 		// We need the manager's id, if we can't find it we'll back out
 
         if ( !isset($data->property_uid) || $data->property_uid == 0 ) {
@@ -125,9 +124,6 @@ class jomres2Jomres_webhookevent_booking_added
 
 			$stay_infos[] = $booking_info;
 		}
-
-
-
 
 		$guest_info = new stdClass();
 		$guest_info->name = $booking_data_response->data->response[0]->guest_data->enc_firstname;

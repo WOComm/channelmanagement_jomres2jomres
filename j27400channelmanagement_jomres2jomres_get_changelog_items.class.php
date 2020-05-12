@@ -40,158 +40,117 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
             return;
         }
 
-        $channel_name = 'jomres2jomres';
+		jr_import('channelmanagement_framework_channels');
+		$channelmanagement_framework_channels = new channelmanagement_framework_channels();
+		$all_channel_ids = $channelmanagement_framework_channels->get_all_channels_ids();
 
-        // First we will find our property ids
-        /*$local_properties = channelmanagement_framework_properties::get_local_property_ids_for_channel(  $channel_name );
+		$local_properties = array();
+
+		if (!empty($all_channel_ids)) {
+			foreach ( $all_channel_ids as $channel_name=>$channel ) {
+				foreach ( $channel as $record ) {
+					// First we will find our property ids
+					$properties = channelmanagement_framework_properties::get_local_property_ids_for_channel(  $record['id'] );
+					if (!empty($properties)) {
+
+						$local_properties[$channel_name][ $record['id']] = $properties;
+					}
+
+				}
+			}
+		}
 
         if (empty($local_properties)) {
             return;
-        }
+        	}
 
+		if (!isset($local_properties['jomres2jomres']) ) {
+			return;
+		}
 
-        $first_property = reset($local_properties);
+		jr_import('channelmanagement_jomres2jomres_communication');
+		$remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
-        $channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
-        $manager_accounts = $channelmanagement_framework_user_accounts->find_channel_owners_for_property($first_property->local_property_uid);
-        $first_manager_id = (int)array_key_first ($manager_accounts);
-        if (!isset($first_manager_id) ||  $first_manager_id == 0 ) {
-            return;
-        }
+		$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
 
-        set_showtime("property_managers_id" , $first_manager_id );
-        $auth = get_auth();
+		// Jomres2jomres installations are only connected to one parent (although the parent can have many children)
+		// Therefore we'll send a request for properties/change/logs and then find those remote ids that we have a record for
+		// And then create a queue item for each property
 
-        jr_import('channelmanagement_rentalsunited_communication');
-        $this->channelmanagement_rentalsunited_communication = new channelmanagement_rentalsunited_communication();
+		$response = $remote_server_communication->communicate( "GET" , 'cmf/properties/change/logs' , [] , true );
 
-        $rows = array();
-        foreach ($local_properties as $local_property) {
-            $r = array();
-            $r['PROPERTY_ID'] = $local_property->remote_property_uid;
-            $rows[] = $r;
-        }
+		$response = (array)$response;
 
-        $output = array(
-            "AUTHENTICATION" => $auth
-            );
+		if (empty($response)) {
+			return;
+		}
 
+		$all_queue_items = channelmanagement_framework_utilities:: get_queue_items();
 
-        $tmpl = new patTemplate();
-        $tmpl->addRows('pageoutput', array($output));
-        $tmpl->addRows('rows', $rows);
-      	$tmpl->setRoot(JOMRES2JOMRES_PLUGIN_ROOT . 'templates' . JRDS . "xml");
-        $tmpl->readTemplatesFromInput('Pull_ListPropertiesChangeLog_RQ.xml');
-        $xml_str = $tmpl->getParsedTemplate();
+		$unique_ids = array();
+		if (!empty($all_queue_items)) {
+			foreach ($all_queue_items as $queue_item ) {
+				$unique_ids[] = $queue_item->unique_id;
+			}
+		}
 
-        $changelog_items = $this->channelmanagement_rentalsunited_communication->communicate( 'Pull_ListPropertiesChangeLog_RQ' , $xml_str );
+		// Not sure if this is going to be an issue, however there's the possibility that two super managers could have channels against them
+		// so some properties might get processed twice. This should prevent that from happening
+		$properties_already_processed = array();
 
-		$atts = '@attributes';
+		foreach ($response as $remote_property_uid => $changelog_items ) {
+			foreach ($local_properties['jomres2jomres'] as $properties ) {
+				foreach ( $properties as $local_property ) {
+					if ( $local_property['remote_property_uid'] == $remote_property_uid && !in_array ( $remote_property_uid , $properties_already_processed )) {
+						if (!empty($changelog_items)) {
 
-        if ( isset ($changelog_items['ChangeLogs']['ChangeLog']) && !empty($changelog_items['ChangeLogs']['ChangeLog']) ) {
-        	foreach ($changelog_items['ChangeLogs']['ChangeLog'] as $property_changelog ) {
+							foreach ($changelog_items as $changelog_item) {
+								// Here we will create a unique id based off of the action, channel and time. As the unique_id column is a var_char you can use anything
+								// The remote channel returns, so if it passes back a unique id that you want to use, you can. So long as that id is not likely to be
+								// the same as that of any other channel.
 
-          		$remote_property_id = $property_changelog[$atts]['PropertyID'];
+								// You can store anything you need in the items "thing", so long as you can process it later
 
-        		// The queuing system allows for a very broad set of data to be stored for processing by this thin plugin's 27410 script, so you can store pretty much anything you want in it's "item" field. This allows individual channels a lot of freedom as to what they want to store for later processing. The data is serialized before storage so pass an array or object or whatever you need
-				// Each thing to be stored should be saved as an individual "thing" to be checked/updated as only one thing will be processed at a time later on to ensure that each "thing" has time to be processed successfully
-				// Completed flag is provided so that you can mark a job completed or not completed as required
+								// Because jomres2jomres only has one parent, there's no further identifying information passed
+								// to be processed later however you may need to send manager information along to the "thing" so that your processing script
+								// Can identify the correct authentication information.
 
-				$local_property_id = 0;
-				foreach ($local_properties as $local_property ) {
+								// Besides those items, everything else is mandatory
 
-					if ($remote_property_id == $local_property->remote_property_uid ) {
-						$local_property_id = $local_property->local_property_uid;
-					}
-				}
+								$date_validity_check = strtotime($changelog_item->date);
+								if ($date_validity_check) {
+									$new_unique_id = $channel_name."_".$changelog_item->action."_".$changelog_item->date;
+									if (!in_array( $new_unique_id , $unique_ids ) ) {
+										$item = new stdClass();
+										$item->remote_property_id	= $remote_property_uid;
+										$item->local_property_id	=  $local_property['local_property_uid'];
+										$item->thing				= filter_var($changelog_item->action, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_BACKTICK );
+										$item->last_updated 		= $changelog_item->date;
 
-				if ( $local_property_id > 0 ) {
-					$items = array();
+										$items[] = array(
+											"channel_name" => $channel_name,
+											"local_property_id" => $local_property['local_property_uid'],
+											"unique_id" => $new_unique_id,
+											"completed" => false,
+											"item" => $changelog_item->webhook_event
+										);
 
-					$item = new stdClass();
-
-					$item->remote_property_id = $remote_property_id;
-					$item->local_property_id = $local_property_id;
-					$item->thing = 'StaticData';
-					$item->last_updated = $property_changelog['StaticData'];
-
-					$items[] = array(
-						"channel_name" => $channel_name,
-						"local_property_id" => $local_property_id,
-						"unique_id" => strtotime($property_changelog['StaticData']),
-						"completed" => false,
-						"item" => $item
-
-					);
-
-					$item = new stdClass();
-					$item->remote_property_id = $remote_property_id;
-					$item->local_property_id = $local_property_id;
-					$item->thing = 'Pricing';
-					$item->last_updated = $property_changelog['Pricing'];
-
-					$items[] = array(
-						"channel_name" => $channel_name,
-						"local_property_id" => $local_property_id,
-						"unique_id" => strtotime($property_changelog['Pricing']),
-						"completed" => false,
-						"item" => $item
-					);
-
-					$item = new stdClass();
-					$item->remote_property_id = $remote_property_id;
-					$item->local_property_id = $local_property_id;
-					$item->thing = 'Availability';
-					$item->last_updated = $property_changelog['Availability'];
-
-					$items[] = array(
-						"channel_name" => $channel_name,
-						"local_property_id" => $local_property_id,
-						"unique_id" => strtotime($property_changelog['Availability']),
-						"completed" => false,
-						"item" => $item
-					);
-
-					$item = new stdClass();
-					$item->remote_property_id = $remote_property_id;
-					$item->local_property_id = $local_property_id;
-					$item->thing = 'Image';
-					$item->last_updated = $property_changelog['Image'];
-
-					$items[] = array(
-						"channel_name" => $channel_name,
-						"local_property_id" => $local_property_id,
-						"unique_id" => strtotime($property_changelog['Image']),
-						"completed" => false,
-						"item" => $item
-					);
-
-					$item = new stdClass();
-					$item->remote_property_id = $remote_property_id;
-					$item->local_property_id = $local_property_id;
-					$item->thing = 'Description';
-					$item->last_updated = $property_changelog['Description'];
-
-					$items[] = array(
-						"channel_name" => $channel_name,
-						"local_property_id" => $local_property_id,
-						"unique_id" => strtotime($property_changelog['Description']),
-						"completed" => false,
-						"item" => $item
-					);
-
-					foreach ($items as $item) {
-						try {
-							channelmanagement_framework_utilities:: store_queue_item($item);
-						} catch (Exception $e) {
-							logging::log_message("Failed to get store queue item for channel " . $channel_name . ". Message " . $e->getMessage(), 'CMF', 'ERROR', serialize($item));
+										foreach ($items as $item) {
+											try {
+												channelmanagement_framework_utilities:: store_queue_item($item);
+											} catch (Exception $e) {
+												logging::log_message("Failed to get store queue item for channel " . $channel_name . ". Message " . $e->getMessage(), 'CMF', 'ERROR', serialize($item));
+											}
+										}
+									}
+								}
+							}
 						}
+						$properties_already_processed[] = $remote_property_uid;
 					}
 				}
 			}
-		}*/
-
-
+		}
     }
 
     public function getRetVals()
