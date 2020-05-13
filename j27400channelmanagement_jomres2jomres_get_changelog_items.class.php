@@ -40,6 +40,17 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
             return;
         }
 
+		$ePointFilepath = get_showtime('ePointFilepath');
+
+		$supported_changelog_events = array();
+		$dir_contents = get_directory_contents($ePointFilepath);
+		foreach ($dir_contents as $file_name ) {
+			if ( strstr($file_name , 'jomres2jomres_changelog_item_process_' )) {
+				$supported_changelog_events[] = substr($file_name , 37 , -4 );
+			}
+
+		}
+
 		jr_import('channelmanagement_framework_channels');
 		$channelmanagement_framework_channels = new channelmanagement_framework_channels();
 		$all_channel_ids = $channelmanagement_framework_channels->get_all_channels_ids();
@@ -118,7 +129,7 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 								// Besides those items, everything else is mandatory
 
 								$date_validity_check = strtotime($changelog_item->date);
-								if ($date_validity_check) {
+								if ($date_validity_check && in_array ( $changelog_item->action , $supported_changelog_events )) {
 									$new_unique_id = $channel_name."_".$changelog_item->action."_".$changelog_item->date;
 									if (!in_array( $new_unique_id , $unique_ids ) ) {
 										$item = new stdClass();

@@ -42,27 +42,29 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 
 		$ePointFilepath = get_showtime('ePointFilepath');
 
+
         $item = unserialize($componentArgs->item);
 
 		if (isset($item->webhook_event) && $item->webhook_event != '' ) {
-			$new_class_name = 'channelmanagement_jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);
-			if (file_exists( $ePointFilepath.$new_class_name.'.class.php') ) {
-				jr_import($new_class_name );
+			$new_class_name = 'jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);
+			if (file_exists( $ePointFilepath.$new_class_name.'.php') ) {
+				require_once ($ePointFilepath.$new_class_name.'.php');
 				if (class_exists($new_class_name)) {
 					$thing_class_result = new $new_class_name($componentArgs);
-					return true;
+					$this->retVals = $thing_class_result->success;
 				} else {
 					logging::log_message("Cannot process webhook ".$item->webhook_event." because no item processing task exists for the event.", 'CMF', 'INFO' , serialize($send_response) );
 				}
 			}
-
-		return false;
+		}
+		if (!isset($this->retVals)) {
+			$this->retVals = false;
 		}
 
     }
 
     public function getRetVals()
     {
-        return null;
+        return $this->retVals;
     }
 }

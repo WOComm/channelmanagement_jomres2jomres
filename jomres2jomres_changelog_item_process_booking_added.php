@@ -21,7 +21,7 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 *
 */
 
-class channelmanagement_jomres2jomres_changelog_item_process_booking_added
+class jomres2jomres_changelog_item_process_booking_added
 {
     function __construct($componetArgs)
 	{
@@ -36,7 +36,7 @@ class channelmanagement_jomres2jomres_changelog_item_process_booking_added
 			$response = $remote_server_communication->communicate( "GET" , '/cmf/property/booking/'.$item->data->property_uid.'/'.$item->data->contract_uid , [] , true );
 
 			jr_import('jomres_call_api');
-			$this->jomres_call_api = new jomres_call_api('system');
+			$jomres_call_api = new jomres_call_api('system');
 
 			$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
 
@@ -114,8 +114,7 @@ class channelmanagement_jomres2jomres_changelog_item_process_booking_added
 				reset($manager_accounts);
 				$manager_id = key($manager_accounts);
 
-
-				$send_response = $this->jomres_call_api->send_request(
+				$send_response = $jomres_call_api->send_request(
 					"PUT"  ,
 					"cmf/reservations/add" ,
 					array ( "reservations" => json_encode($reservations) ) ,
@@ -126,16 +125,26 @@ class channelmanagement_jomres2jomres_changelog_item_process_booking_added
 					logging::log_message("Added changelog booking ", 'CMF', 'DEBUG' , '' );
 					logging::log_message("Component args ", 'CMF', 'DEBUG' , serialize($componetArgs) );
 					logging::log_message("Response ", 'CMF', 'DEBUG' , serialize($send_response) );
+					$this->success = true;
 				} else {
+
 					logging::log_message("Failed to add changelog booking ", 'CMF', 'ERROR' , '' );
 					logging::log_message("Component args ", 'CMF', 'ERROR' , serialize($componetArgs) );
 					logging::log_message("Response ", 'CMF', 'ERROR' , serialize($send_response) );
+					$this->success = false;
+
 				}
 
-
-				return true;
+			} else {
+				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
 			}
+		} else {
+			logging::log_message("Property or Contract id not set", 'CMF', 'INFO' , '' );
 		}
+		if (!isset($this->success)) {
+			$this->success = false;
+		}
+
 	}
 }
 
