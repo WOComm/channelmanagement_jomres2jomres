@@ -53,6 +53,18 @@ class jomres2jomres_changelog_item_process_booking_added
 					if ( isset($booking_data->booking_id) && $booking_data->booking_id ==  $item->data->contract_uid ) {
 						// Ok, let's insert this puppie into the system
 
+						$unknown =  jr_gettext('BOOKING_NOSHOW_UNKNOWN', 'BOOKING_NOSHOW_UNKNOWN', false);
+						
+						if ( $booking_data->booking_total				== 0 ) {  $booking_data->booking_total = 1; } // Just enough to get it over the line
+
+						if ( $booking_data->guest_data->enc_firstname	== '' ) {  $booking_data->guest_data->enc_firstname = $unknown; }
+						if ( $booking_data->guest_data->enc_surname		== '' ) {  $booking_data->guest_data->enc_surname = $unknown; }
+						if ( $booking_data->guest_data->enc_email		== '' ) {  $booking_data->guest_data->enc_email = "uknown@example.com"; } // Not perfect :(
+						if ( $booking_data->guest_data->enc_tel_mobile	== '' ) {  $booking_data->guest_data->enc_tel_mobile = $unknown; }
+						if ( $booking_data->guest_data->enc_house		== '' ) {  $booking_data->guest_data->enc_house = $unknown; }
+						if ( $booking_data->guest_data->enc_postcode	== '' ) {  $booking_data->guest_data->enc_postcode = $unknown; }
+						if ( $booking_data->guest_data->country_code	== '' ) {  $booking_data->guest_data->country_code = '__'; }
+
 						$stay_info = new stdClass();
 
 						$stay_info->property_id		= $componetArgs->property_uid;
@@ -75,6 +87,17 @@ class jomres2jomres_changelog_item_process_booking_added
 						$stay_info->room_type_id	= (int)$room_types[$first_key]->room_type_id;
 						$stay_info->room_type_name	= $room_types[$first_key]->room_type_name;
 						$stay_info->guest_number	= (int)$booking_data->guest_numbers->number_of_guests;
+
+
+
+						// This script can handle black bookings, which don't have guest information
+						if ( $booking_data->guest_data->enc_firstname	== '' ) {  $booking_data->guest_data->enc_firstname = $unknown; }
+						if ( $booking_data->guest_data->enc_surname		== '' ) {  $booking_data->guest_data->enc_surname = $unknown; }
+						if ( $booking_data->guest_data->enc_email		== '' ) {  $booking_data->guest_data->enc_email = $unknown; }
+						if ( $booking_data->guest_data->enc_tel_mobile	== '' ) {  $booking_data->guest_data->enc_tel_mobile = $unknown; }
+						if ( $booking_data->guest_data->enc_house		== '' ) {  $booking_data->guest_data->enc_house = $unknown; }
+						if ( $booking_data->guest_data->enc_postcode	== '' ) {  $booking_data->guest_data->enc_postcode = $unknown; }
+						if ( $booking_data->guest_data->country_code	== '' ) {  $booking_data->guest_data->country_code = '__'; }
 
 						$guest_info = new stdClass();
 						$guest_info->name			= $booking_data->guest_data->enc_firstname;

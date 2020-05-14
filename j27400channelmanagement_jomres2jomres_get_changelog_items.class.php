@@ -42,6 +42,12 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 
 		$ePointFilepath = get_showtime('ePointFilepath');
 
+		// The event trigger crossref is used to group various webhooks, for example booking_added and blackbooking_added can be handled in the same way by the booking_added script, therefore we will adjust the queue action here
+		jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
+		$event_trigger_crossref = new channelmanagement_jomres2jomres_push_event_trigger_crossref();
+		$comparable_events = $event_trigger_crossref->events;
+
+
 		$supported_changelog_events = array();
 		$dir_contents = get_directory_contents($ePointFilepath);
 		foreach ($dir_contents as $file_name ) {
@@ -63,10 +69,8 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 					// First we will find our property ids
 					$properties = channelmanagement_framework_properties::get_local_property_ids_for_channel(  $record['id'] );
 					if (!empty($properties)) {
-
 						$local_properties[$channel_name][ $record['id']] = $properties;
 					}
-
 				}
 			}
 		}
@@ -127,6 +131,23 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 								// Can identify the correct authentication information.
 
 								// Besides those items, everything else is mandatory
+
+								///////////////////////////////////////////////////////////////////////////////
+								// If the current action isn't in the supported events array, we can search the
+								// comparable events array to see if there's another script that can be used instead
+
+								if ( !in_array ( $changelog_item->action , $supported_changelog_events )) {
+									foreach ($comparable_events as $key=>$val) {
+										if (in_array( $changelog_item->action , $val )) {
+											$note = 'Adjusted event from '.$changelog_item->action;
+											$changelog_item->action = $key;
+
+											// We are only changing the webhook event name in the context of this plugin, not across the board, so this should be safe enough
+											$changelog_item->webhook_event->webhook_event = $key;
+											$changelog_item->webhook_event->webhook_event_note = $note;
+										}
+									}
+								}
 
 								$date_validity_check = strtotime($changelog_item->date);
 								if ($date_validity_check && in_array ( $changelog_item->action , $supported_changelog_events )) {

@@ -28,7 +28,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 		$this->events = array (
 			'blackbooking_added'		=> [  ],
 			'blackbooking_deleted'		=> [  ],
-			'booking_added'				=> [ 'booking_added' ],
+			'booking_added'				=> [ 'booking_added' , 'blackbooking_added'],
 			'booking_cancelled'			=> [  ],
 			'booking_marked_noshow'		=> [  ],
 			'booking_modified'			=> [  ],
