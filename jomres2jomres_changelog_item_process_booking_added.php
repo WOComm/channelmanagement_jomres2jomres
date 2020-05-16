@@ -38,8 +38,6 @@ class jomres2jomres_changelog_item_process_booking_added
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
-			$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
-
 			if (is_array($response) ) {
 
 				$reservations = new stdClass();
@@ -54,7 +52,7 @@ class jomres2jomres_changelog_item_process_booking_added
 						// Ok, let's insert this puppie into the system
 
 						$unknown =  jr_gettext('BOOKING_NOSHOW_UNKNOWN', 'BOOKING_NOSHOW_UNKNOWN', false);
-						
+
 						if ( $booking_data->booking_total				== 0 ) {  $booking_data->booking_total = 1; } // Just enough to get it over the line
 
 						if ( $booking_data->guest_data->enc_firstname	== '' ) {  $booking_data->guest_data->enc_firstname = $unknown; }
@@ -126,16 +124,7 @@ class jomres2jomres_changelog_item_process_booking_added
 					$index++;
 				}
 
-				//$response = $channelmanagement_framework_singleton->rest_api_communicate("jomres2jomres", 'PUT', $endpoint, $data_array);
-
-				// We need to find the manager's uid so that we can send the call to the local system
-				$manager_accounts = $channelmanagement_framework_user_accounts->find_channel_owners_for_property($componetArgs->property_uid);
-
-				if (empty($manager_accounts)) {
-					throw new Exception( "Tried to import booking for property ".$componetArgs->property_uid." however could not find a manager to enable access to API");
-				}
-				reset($manager_accounts);
-				$manager_id = key($manager_accounts);
+				$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
 
 				$send_response = $jomres_call_api->send_request(
 					"PUT"  ,

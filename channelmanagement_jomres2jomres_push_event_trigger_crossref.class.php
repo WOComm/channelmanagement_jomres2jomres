@@ -17,7 +17,9 @@ defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowe
 * @package Jomres\CMF
 *
 * Returns an array of Jomres webhooks and the Jomres2jomres scripts that will be called when those webhooks have been triggered
-* For completion I'll record most webhook events as empty for now. As this was inherited from Rentals United thin plugin it's not _really_ necessary, however leaving the handling in place makes it easier to create multiple scripts to handle one event later if needed
+* For completion I'll record most webhook events as empty for now.
+*
+* Where array elements have more than one item, then the index is used to group webhook events together so that the parent can handle the element's webhook (e.g. booking_added can also handle blackbooking_added)
 *
 */
 
@@ -59,6 +61,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'property_deleted'			=> [ 'property_deleted' ],
 			'property_published'		=> [  ],
 			'property_settings_updated'	=> [  ],
+			'plugin_settings_saved'		=> [  ],
 			'property_unpublished'		=> [  ],
 			'property_approved'			=> [  ],
 			'property_unapproved'		=> [  ],

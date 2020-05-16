@@ -86,8 +86,6 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 		jr_import('channelmanagement_jomres2jomres_communication');
 		$remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
-		$channelmanagement_framework_user_accounts = new channelmanagement_framework_user_accounts();
-
 		// Jomres2jomres installations are only connected to one parent (although the parent can have many children)
 		// Therefore we'll send a request for properties/change/logs and then find those remote ids that we have a record for
 		// And then create a queue item for each property
@@ -151,8 +149,11 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 
 								$date_validity_check = strtotime($changelog_item->date);
 								if ($date_validity_check && in_array ( $changelog_item->action , $supported_changelog_events )) {
-									$new_unique_id = $channel_name."_".$changelog_item->action."_".$changelog_item->date;
+
+									$new_unique_id = 'jomres2jomres'."_".$changelog_item->action."_".$changelog_item->date;
+
 									if (!in_array( $new_unique_id , $unique_ids ) ) {
+
 										$item = new stdClass();
 										$item->remote_property_id	= $remote_property_uid;
 										$item->local_property_id	=  $local_property['local_property_uid'];
@@ -160,7 +161,7 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 										$item->last_updated 		= $changelog_item->date;
 
 										$items[] = array(
-											"channel_name" => $channel_name,
+											"channel_name" => 'jomres2jomres',
 											"local_property_id" => $local_property['local_property_uid'],
 											"unique_id" => $new_unique_id,
 											"completed" => false,
