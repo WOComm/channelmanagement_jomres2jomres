@@ -50,8 +50,17 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 			if (file_exists( $ePointFilepath.$new_class_name.'.php') ) {
 				require_once ($ePointFilepath.$new_class_name.'.php');
 				if (class_exists($new_class_name)) {
-					$thing_class_result = new $new_class_name($componentArgs);
-					$this->retVals = $thing_class_result->success;
+					try {
+						$thing_class_result = new $new_class_name($componentArgs);
+						if (isset($thing_class_result->success)) {
+							$this->retVals = $thing_class_result->success;
+						} else {
+							logging::log_message('Success not returned ', 'CMF', 'WARNING', serialize($thing_class_result));
+						}
+					}
+					catch (Exception $e) {
+						logging::log_message('Cannot process webhook because... '.$e->getMessage(), 'CMF', 'WARNING');
+					}
 				} else {
 					logging::log_message("Cannot process webhook ".$item->webhook_event." because no item processing task exists for the event.", 'CMF', 'INFO' , serialize($send_response) );
 				}

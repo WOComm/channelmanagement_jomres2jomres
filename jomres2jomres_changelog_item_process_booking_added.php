@@ -81,12 +81,15 @@ class jomres2jomres_changelog_item_process_booking_added
 
 						$room_types = (array)$booking_data->room_types_booked;
 
-						$stay_info->room_quantity	= (INT)$room_types[$first_key]->number_of_rooms_of_type_booked;
+						IF (!isset($room_types[$first_key])) {
+							logging::log_message("Failed to add changelog booking because the room type relationship is wrong. Most likely caused by the booking being added on the remote system then cancelled before the booking could be created on the child server. ", 'CMF', 'WARNNG' , '' );
+							throw new Exception( 'Failed to add changelog booking because the room type relationship is wrong. Most likely caused by the booking being added on the remote system then cancelled before the booking could be created on the child server.');
+						}
+
+						$stay_info->room_quantity	= (int)$room_types[$first_key]->number_of_rooms_of_type_booked;
 						$stay_info->room_type_id	= (int)$room_types[$first_key]->room_type_id;
 						$stay_info->room_type_name	= $room_types[$first_key]->room_type_name;
 						$stay_info->guest_number	= (int)$booking_data->guest_numbers->number_of_guests;
-
-
 
 						// This script can handle black bookings, which don't have guest information
 						if ( $booking_data->guest_data->enc_firstname	== '' ) {  $booking_data->guest_data->enc_firstname = $unknown; }
