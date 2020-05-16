@@ -6,7 +6,7 @@
  *
  * @version Jomres 9.8.21
  *
- * @copyright	2005-2017 Vince Wooll
+* @copyright	2005-2020 Vince Wooll
  * 
  **/
 
