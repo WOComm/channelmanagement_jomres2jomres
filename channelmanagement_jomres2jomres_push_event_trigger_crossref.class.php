@@ -49,9 +49,9 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'guest_checkedout_undone'	=> [  ], // Wont mirror
 			'guest_deleted'				=> [  ], // Wont mirror
 			'guest_saved'				=> [  ], // Wont mirror
-			'guest_type_deleted'		=> [  ],
-			'guest_type_saved'			=> [  ],
-			'image_added'				=> [  ],
+			'guest_type_deleted'		=> [  ], // Mirrored
+			'guest_type_saved'			=> [  ], // Mirrored
+			'image_added'				=> [  ], // Mirrored
 			'image_deleted'				=> [  ],
 			'invoice_created'			=> [  ], // Wont mirror
 			'invoice_cancelled'			=> [  ], // Wont mirror
