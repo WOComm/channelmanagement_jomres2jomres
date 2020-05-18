@@ -10,4 +10,6 @@ If you are a Channel Manager who wants to build your own thin plugin(s) for conn
 
  
 
+When using this plugin to setup connections between child and parent servers you need to remember that there can be only one parent of a child.
+
 
