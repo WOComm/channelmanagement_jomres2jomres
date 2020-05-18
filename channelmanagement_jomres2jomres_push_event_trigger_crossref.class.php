@@ -52,7 +52,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'guest_type_deleted'		=> [  ], // Mirrored
 			'guest_type_saved'			=> [  ], // Mirrored
 			'image_added'				=> [  ], // Mirrored
-			'image_deleted'				=> [  ],
+			'image_deleted'				=> [  ], // Mirrored
 			'invoice_created'			=> [  ], // Wont mirror
 			'invoice_cancelled'			=> [  ], // Wont mirror
 			'invoice_saved'				=> [  ], // Wont mirror
