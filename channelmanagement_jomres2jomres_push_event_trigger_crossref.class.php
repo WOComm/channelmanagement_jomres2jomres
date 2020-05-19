@@ -69,7 +69,7 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'property_incompleted'		=> [  ],
 			'review_deleted'			=> [  ],
 			'review_published'			=> [  ],
-			'review_saved'				=> [  ],
+			'review_saved'				=> [  ], // Mirrored
 			'review_unpublished'		=> [  ],
 			'room_added'				=> [  ],
 			'room_deleted'				=> [  ],

@@ -56,18 +56,6 @@ class channelmanagement_jomres2jomres_communication
 		// Webhook events will use this method, but we don't (?) want to cache the messages so we'll not cache them
 		$method_can_be_cached = true;
 
-/*        jr_import('channelmanagement_jomres2jomres_push_event_trigger_crossref');
-        $event_trigger_crossref = new channelmanagement_jomres2jomres_push_event_trigger_crossref();
-		foreach ( $event_trigger_crossref->events as $event_type ) {
-            if ( in_array( $method , $event_type )) {
-                $method_can_be_cached = false;
-            }
-        }*/
-
-/*		if ($method == 'Pull_ListPropertiesChangeLog_RQ' ) {
-			$method_can_be_cached = false;
-		}*/
-
 		if ($clear_cache == true ) {
 			$method_can_be_cached = false;
 		}

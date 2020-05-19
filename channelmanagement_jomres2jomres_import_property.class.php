@@ -145,8 +145,7 @@ class channelmanagement_jomres2jomres_import_property
 		$image_info = json_decode(json_encode($remote_property->images), true);
 
 		// Images to be imported
-		// Disabled due to development of webhook handling
-/*		$image_urls = array();
+		$image_urls = array();
 
 		if (!empty($image_info['property'])) {
 			foreach ($image_info['property'] as $images) {
@@ -166,7 +165,7 @@ class channelmanagement_jomres2jomres_import_property
 					}
 				}
 			}
-		}*/
+		}
 
 		$new_property = new stdclass();
 
@@ -247,8 +246,8 @@ class channelmanagement_jomres2jomres_import_property
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/management/url', $data_array);
 
-				// Disabled due to development of webhook handling
-				/*if (!empty($new_property->property_details['image_urls'])) {
+
+				if (!empty($new_property->property_details['image_urls'])) {
 					foreach ($new_property->property_details['image_urls'] as $image_url) {
 						if (isset($new_property->property_details['image_urls']['property'])) {
 							foreach ($new_property->property_details['image_urls']['property'] as $image_url) {
@@ -262,7 +261,7 @@ class channelmanagement_jomres2jomres_import_property
 							}
 						}
 					}
-				}*/
+				}
 
 				if ($new_property_id < 1) {
 					throw new Exception("Did not receive new property uid, failed to create property.");

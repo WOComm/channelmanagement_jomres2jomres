@@ -34,7 +34,7 @@ class channelmanagement_jomres2jomres_list_remote_properties
 
 		$endpoint = '/cmf/properties/all';
 
-		$response = $remote_server_communication->communicate( "GET" , $endpoint , [] , false );
+		$response = $remote_server_communication->communicate( "GET" , $endpoint , [] , true );
 
 		if (!empty($response) ) {
 

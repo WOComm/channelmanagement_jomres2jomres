@@ -1,0 +1,79 @@
+<?php
+/**
+* Jomres CMS Agnostic Plugin
+* @author Woollyinwales IT <sales@jomres.net>
+* @version Jomres 9 
+* @package Jomres
+* @copyright	2005-2020 Vince Wooll
+* Jomres (tm) PHP files are released under both MIT and GPL2 licenses. This means that you can choose the license that best suits your project.
+**/
+
+// ################################################################
+defined( '_JOMRES_INITCHECK' ) or die( 'Direct Access to this file is not allowed.' );
+// ################################################################
+
+/**
+*
+* @package Jomres\CMF
+*
+* Handles webhook events on the parent server
+*
+*
+*/
+
+class jomres2jomres_changelog_item_process_review_deleted
+{
+    function __construct($componetArgs)
+	{
+		$item = unserialize($componetArgs->item);
+
+		if ( isset($item->data->property_uid) ) {
+			$item_type = "reviews";
+
+			$cross_references = channelmanagement_framework_utilities :: get_cross_references_for_property_uid ( 'jomres2jomres' , $componetArgs->property_uid , $item_type );
+
+			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
+
+			jr_import('jomres_call_api');
+			$jomres_call_api = new jomres_call_api('system');
+
+			$local_id = 0;
+			foreach ($cross_references as $rev) {
+
+				if ($rev["remote_id"] == $item->data->review_uid) {
+					$local_id = $rev['local_id'];
+				}
+			}
+
+			if ($local_id > 0 ) {
+				$send_response = $jomres_call_api->send_request(
+					"DELETE",
+					"cmf/property/review/".$componetArgs->property_uid."/".$local_id ,
+					[],
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+				);
+
+				if (isset($send_response->data->response) && $send_response->data->response == true ) {
+					//channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $local_id, 0 );
+					logging::log_message("Deleted review ", 'CMF', 'DEBUG', '');
+					logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
+					logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+					$this->success = true;
+				} else {
+					logging::log_message("Failed to delete review ", 'CMF', 'ERROR', '');
+					logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
+					logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+					$this->success = false;
+				}
+			}
+		} else {
+			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+		}
+		if (!isset($this->success)) {
+			$this->success = false;
+		}
+	}
+}
+
+
+
