@@ -67,13 +67,12 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'property_updated'			=> [  ], // Mirrored
 			'property_completed'		=> [  ],
 			'property_incompleted'		=> [  ],
-			'review_deleted'			=> [  ],
-			'review_published'			=> [  ],
+			'review_deleted'			=> [  ], // Mirrored
+			'review_published'			=> [  ], // Mirrored
 			'review_saved'				=> [  ], // Mirrored
-			'review_unpublished'		=> [  ],
-			'room_added'				=> [  ],
+			'review_unpublished'		=> [  ], // Mirrored
+			'room_added'				=> [ 'room_added' , 'room_updated' ],
 			'room_deleted'				=> [  ],
-			'room_updated'				=> [  ],
 			'rooms_multiple_added'		=> [  ],
 			'tariff_cloned'				=> [  ],
 			'tariffs_updated'			=> [  ]
