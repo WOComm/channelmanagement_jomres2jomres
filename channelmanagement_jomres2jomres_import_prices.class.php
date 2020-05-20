@@ -39,6 +39,10 @@ class channelmanagement_jomres2jomres_import_prices
 			throw new Exception( "Remote room type id is not set " );
 		}
 
+		jr_import('jomres_call_api');
+		$jomres_call_api = new jomres_call_api('system');
+
+
         jr_import('channelmanagement_jomres2jomres_communication'); // channelmanagement_jomres2jomres_communication is unique to this thin plugin and is the mechanism for talking to the remote service
         $remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
@@ -54,10 +58,16 @@ class channelmanagement_jomres2jomres_import_prices
 				"max_people"					=> $sleeps
 			);
 
+		$send_response = $jomres_call_api->send_request(
+			"PUT",
+			'cmf/property/base/price/',
+			$post_data,
+			array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+		);
+
 		$base_price_set_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/base/price/' , $post_data );
 
 		$remote_prices = $remote_server_communication->communicate( 'GET' , 'cmf/property/list/prices/'.$remote_property_id ,  array() , true  );
-
 		$remote_prices = json_decode(json_encode($remote_prices), true);
 
 		$arr = array();
@@ -98,42 +108,13 @@ class channelmanagement_jomres2jomres_import_prices
 					}
 				}
 			}
-
-			$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/tariff/' , $post_data );
-/*			foreach ($remote_prices['tariff_sets'] as $tariff_sets ) {
-				foreach ($tariff_sets as $tariff_set) {
-
-						$set				= new stdClass();
-						$set->date_from		= $tariff_set ["date_range"] ["start"];
-						$set->date_to		= $tariff_set ["date_range"] ["end"];
-						$set->ratepernight	= $tariff_set ["rate_per_night"]["price_excluding_vat"];
-						$arr[] = $set;
-				}
-			}
-			$post_data = array (
-				"property_uid" => $property_uid,
-				"ratepernight" => json_encode($arr)
- 			);
-
-			$response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/prices/' , $post_data );*/
+			$send_response = $jomres_call_api->send_request(
+				"PUT",
+				'cmf/property/base/price/',
+				$post_data,
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+			);
 		}
 	}
 }
-
-/*property_uid
-tarifftypeid
-rate_title
-rate_description
-maxdays
-minpeople
-maxpeople
-roomclass_uid
-dayofweek
-ignore_pppn
-allow_we
-weekendonly
-minrooms_alreadyselected
-maxrooms_alreadyselected
-tariffinput[1577059200]
-mindaysinput[1577059200]*/
 

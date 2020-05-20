@@ -236,6 +236,10 @@ class channelmanagement_jomres2jomres_import_property
 			}
 
 			$new_property_id = $response->data->response;
+			if ($new_property_id < 1) {
+				throw new Exception("Did not receive new property uid, failed to create property.");
+			}
+
 			try {
 				set_showtime('new_property_id', $new_property_id);
 
@@ -246,148 +250,14 @@ class channelmanagement_jomres2jomres_import_property
 				);
 				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/management/url', $data_array);
 
+				// Pulls webhook events from the remote server, inserts them into the queue and then processes those queue items
+				// Slightly iffy in that rooms should be created before tariffs, otherwise we might have problems
 
-				if (!empty($new_property->property_details['image_urls'])) {
-					foreach ($new_property->property_details['image_urls'] as $image_url) {
-						if (isset($new_property->property_details['image_urls']['property'])) {
-							foreach ($new_property->property_details['image_urls']['property'] as $image_url) {
-								channelmanagement_framework_utilities:: get_image($image_url, $new_property_id, 'property', 0);
-							}
-						}
-
-						if (isset($new_property->property_details['image_urls']['slideshow'])) {
-							foreach ($new_property->property_details['image_urls']['slideshow'] as $image_url) {
-								channelmanagement_framework_utilities:: get_image($image_url, $new_property_id, 'slideshow', 0);
-							}
-						}
-					}
-				}
-
-				if ($new_property_id < 1) {
-					throw new Exception("Did not receive new property uid, failed to create property.");
-				}
-
-
-				// Room prices
-				jr_import('channelmanagement_jomres2jomres_import_prices');
-
-				foreach ($property_room_types as $room_types) {
-					// First we need rooms, once they are added we can create tariffs
-					$local_room_type		= $room_types['amenity'];
-					$remote_room_type_id	= $room_types['amenity']->remote_item_id;
-					$local_room_type_id		= $room_types['amenity']->jomres_id;
-
-					$data_array = array(
-						"property_uid"	=> $new_property_id,
-						"rooms"			=> json_encode(array($room_types))
-					);
-
-					$response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/rooms/', $data_array);
-
-					// now that we have rooms in the system, we can set the base price for each room type
-					channelmanagement_jomres2jomres_import_prices::import_prices($JRUser->id, $channel, $remote_property_id, $new_property_id, $max_guests_in_property, $local_room_type_id , $remote_room_type_id );
-				}
-
-				$post_data = array("property_uid" => $new_property_id, "params" => json_encode($remote_settings)); // mrConfig array values are property specific settings
-
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/settings', $post_data);
-
-				if (is_array($plugin_settings) && !empty($plugin_settings)) {
-					foreach ($plugin_settings as $plugin=>$settings) {
-						// Plugin -----------------------------------------------------------------------------
-
-						if(is_array($settings)) {
-							$sets = array();
-							foreach ($settings as $k=>$v) {
-								if ($k != 'jomres_csrf_token') {
-									$sets[$k] = $v;
-								}
-							}
-							$settings = $sets;
-						}
-
-						$data_array = array (
-							"property_uid" 			=> $new_property_id,
-							"plugin" 				=> $plugin,
-							"params"				=> json_encode($settings)
-						);
-
-						$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/plugin/settings/', $data_array);
-					}
-				}
-
-				// Now that we have a new property setup, let's start adding it's various information items.
-
-				// Location
-				$data_array = array(
-					"property_uid"	=> $new_property_id,
-					"country_code"	=> $new_property_basics_array['country'],
-					"region_id"		=> $new_property_basics_array['region_id'],
-					"lat"			=> $new_property->property_details['lat'],
-					"long"			=> $new_property->property_details['long'],
-
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/location/', $data_array);
-
-				// Contacts
-				$data_array = array(
-					"property_uid"	=> $new_property_id,
-					"telephone"		=> $new_property->property_details['tel'],
-					"fax"			=> '',
-					"email"			=> $new_property->property_details['email']
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/contacts/', $data_array);
-
-				// Descriptive texts
-				$data_array = array(
-					"property_uid"			=> $new_property_id,
-					"description"			=> $new_property->property_details['property_description'],
-					"checkin_times"			=> $new_property->property_details['property_checkin_times'],
-					"area_activities"		=> '',
-					"driving_directions"	=> '',
-					"airports"				=> '',
-					"othertransport"		=> '',
-					"terms"					=> '',
-					"fax"					=> '',
-					"permit_number"			=> $new_property->property_details['licensenumber']
-				);
-
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/text/', $data_array);
-
-				// Address
-				$data_array = array(
-					"property_uid"	=> $new_property_id,
-					"house"			=> $new_property_basics_array['property_name'],  // The RU data I'm working with doesn't have address details, so to prevent the system from complaining that the property address details are incomplete, we'll set this to blank for now
-					"street"		=> ' ',
-					"town"			=> ' ',
-					"postcode"		=> ' '
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/address/', $data_array);
-
-				// Stars
-				$data_array = array(
-					"property_uid"	=> $new_property_id,
-					"stars"			=> 0,
-					"superior"		=> 0
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/stars/', $data_array);
-
-				// Property Features
-				$features_str = '';
-				if (!empty($property_features)) {
-					foreach ($property_features as $feature) {
-						$features_str .= $feature->jomres_id . ",";
-					}
-				}
-
-				$data_array = array(
-					"property_uid"	=> $new_property_id,
-					"features"		=> $features_str
-				);
-				$channelmanagement_framework_singleton->rest_api_communicate($channel, 'PUT', 'cmf/property/features/', $data_array);
+				$MiniComponents = jomres_singleton_abstract::getInstance('mcHandler');
+				$MiniComponents->specificEvent('06000', 'cron_get_remote_changelog_items', array());
+				$MiniComponents->specificEvent('06000', 'cron_process_remote_changelog_items', array());
 
 				// Publishing
-
 				// We need to force a status review, where the system will see if the property is complete. If it is, we can publish it
 
 				$data_array = array(

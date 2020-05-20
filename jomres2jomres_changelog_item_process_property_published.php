@@ -64,7 +64,7 @@ class jomres2jomres_changelog_item_process_property_published
 					logging::log_message("Updated property ".$componetArgs->property_uid, 'CMF', 'DEBUG' , '' );
 					$this->success = true;
 				} else {
-					logging::log_message("Failed to update property. Failed on ".$failedon, 'CMF', 'ERROR' , '' );
+					logging::log_message("Failed to update property. Failed on ".$failed_on, 'CMF', 'ERROR' , '' );
 					$this->success = false;
 				}
 			} else {

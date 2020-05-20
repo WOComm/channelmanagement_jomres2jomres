@@ -52,12 +52,12 @@ class jomres2jomres_changelog_item_process_room_deleted
 
 				if (isset($send_response->data->response) && $send_response->data->response == true ) {
 					channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->room_uid, 0 ); // Although the api endpoint should create a link we still need this cross referencing for room images
-					logging::log_message("Added coupon ", 'CMF', 'DEBUG', '');
+					logging::log_message("Added room ", 'CMF', 'DEBUG', '');
 					logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
 					logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
 					$this->success = true;
 				} else {
-					logging::log_message("Failed to add coupon ", 'CMF', 'ERROR', '');
+					logging::log_message("Failed to add room ", 'CMF', 'ERROR', '');
 					logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
 					logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
 					$this->success = false;

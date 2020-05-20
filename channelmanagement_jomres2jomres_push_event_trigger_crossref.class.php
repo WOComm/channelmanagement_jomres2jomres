@@ -73,9 +73,10 @@ class channelmanagement_jomres2jomres_push_event_trigger_crossref
 			'review_unpublished'		=> [  ], // Mirrored
 			'room_added'				=> [ 'room_added' , 'room_updated' ], // Mirrored
 			'room_deleted'				=> [  ], // Mirrored
-			'rooms_multiple_added'		=> [  ],
+			'rooms_multiple_added'		=> [  ], // Mirrored
+			'rooms_multiple_deleted'	=> [  ], // Mirrored
 			'tariff_cloned'				=> [  ],
-			'tariffs_updated'			=> [  ]
+			'tariffs_updated'			=> [  ] // Mirrored
 		);
 	}
 
