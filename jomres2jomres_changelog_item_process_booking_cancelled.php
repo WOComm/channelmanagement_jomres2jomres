@@ -50,7 +50,7 @@ class jomres2jomres_changelog_item_process_booking_cancelled
 					"GET"  ,
 					'cmf/property/booking/link/'.$componetArgs->property_uid.'/'.$remote_booking_number ,
 					array () ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				// It is legitimate for a local booking to not exist, for example a remote booking could have been created and then cancelled before this
@@ -69,7 +69,7 @@ class jomres2jomres_changelog_item_process_booking_cancelled
 						"PUT"  ,
 						"cmf/reservations/cancel" ,
 						array ( "reservation_ids" => json_encode(array($remote_booking_number)) ) ,
-						array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+						array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 					);
 
 					if (isset($cancel_response->data->response->success) && $cancel_response->data->response->success == true ) {

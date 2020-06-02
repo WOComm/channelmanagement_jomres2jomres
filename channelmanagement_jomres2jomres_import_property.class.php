@@ -286,7 +286,6 @@ class channelmanagement_jomres2jomres_import_property
 			{
 				$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'DELETE' , 'cmf/property/local/'.$new_property_id );
 				logging::log_message("Failed to create new property, so incomplete and removed again. Error message : ".$e->getMessage()." -- Remote property id ".$remote_property_id , 'CMF', 'DEBUG' , '' );
-				logging::log_message("Failed to create new property, so incomplete and removed again. Error message : ".$e->getMessage()." -- Remote property id ".$remote_property_id , 'CMF', 'DEBUG' , '' );
 			}
 
 }

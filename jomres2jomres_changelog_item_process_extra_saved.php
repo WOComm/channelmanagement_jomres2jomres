@@ -50,7 +50,7 @@ class jomres2jomres_changelog_item_process_extra_saved
 				"GET",
 				"cmf/list/tax/rates",
 				[],
-				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 			);
 
 			if (!isset($local->data->response)) {
@@ -127,7 +127,7 @@ class jomres2jomres_changelog_item_process_extra_saved
 							"PUT",
 							"cmf/property/extra",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 						);
 
 						if (isset($send_response->data->response->extra_id) && $send_response->data->response->extra_id > 0) {

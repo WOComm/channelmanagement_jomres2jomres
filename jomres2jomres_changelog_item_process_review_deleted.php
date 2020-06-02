@@ -50,7 +50,7 @@ class jomres2jomres_changelog_item_process_review_deleted
 					"DELETE",
 					"cmf/property/review/".$componetArgs->property_uid."/".$local_id ,
 					[],
-					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 				);
 
 				if (isset($send_response->data->response) && $send_response->data->response == true ) {

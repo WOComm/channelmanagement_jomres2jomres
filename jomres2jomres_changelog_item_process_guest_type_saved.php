@@ -72,7 +72,7 @@ class jomres2jomres_changelog_item_process_guest_type_saved
 							"PUT",
 							"cmf/property/guesttype",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 						);
 
 						if (isset($send_response->data->response->id) && $send_response->data->response->id > 0) {

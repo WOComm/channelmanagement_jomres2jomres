@@ -47,7 +47,7 @@ class jomres2jomres_changelog_item_process_coupon_deleted
 					"DELETE",
 					"cmf/property/coupon/". $componetArgs->property_uid.'/'.$cross_references[$item->data->coupon_id]['local_id'],
 					[],
-					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 					);
 
 				if (isset($send_response->data->response) && $send_response->data->response == true ) {

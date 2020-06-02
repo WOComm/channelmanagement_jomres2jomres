@@ -39,7 +39,7 @@ class jomres2jomres_changelog_item_process_image_deleted
 				"GET",
 				"cmf/property/images/" . $componetArgs->property_uid,
 				[],
-				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 			);
 
 			$local_images = $response = json_decode(json_encode($send_response), true);

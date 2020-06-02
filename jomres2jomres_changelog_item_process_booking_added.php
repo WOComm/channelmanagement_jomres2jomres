@@ -133,7 +133,7 @@ class jomres2jomres_changelog_item_process_booking_added
 					"PUT"  ,
 					"cmf/reservations/add" ,
 					array ( "reservations" => json_encode($reservations) ) ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (isset($send_response->data->response->successful_bookings) && !empty($send_response->data->response->successful_bookings)) {

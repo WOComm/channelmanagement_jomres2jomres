@@ -73,7 +73,7 @@ class jomres2jomres_changelog_item_process_review_saved
 								"PUT",
 								"cmf/property/review",
 								$put_data,
-								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 							);
 
 							if (isset($send_response->data->response->rating_id) && $send_response->data->response->rating_id > 0) {

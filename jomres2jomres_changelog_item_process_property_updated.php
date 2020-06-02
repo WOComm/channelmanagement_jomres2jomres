@@ -57,7 +57,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/metas" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($metas_response->data->response->propertys_uid)) {
@@ -98,7 +98,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/features" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($features_response->data->response->propertys_uid)) {
@@ -120,7 +120,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/location" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($location_response->data->response->propertys_uid)) {
@@ -141,7 +141,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/contacts" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($contacts_response->data->response->propertys_uid)) {
@@ -164,7 +164,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/address" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($address_response->data->response->propertys_uid)) {
@@ -189,7 +189,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/text" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($text_response->data->response->propertys_uid)) {
@@ -211,7 +211,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/location" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($location_response->data->response->propertys_uid)) {
@@ -233,7 +233,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/location" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 				);
 
 				if (!isset($location_response->data->response->propertys_uid)) {

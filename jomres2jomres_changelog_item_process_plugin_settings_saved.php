@@ -68,7 +68,7 @@ class jomres2jomres_changelog_item_process_plugin_settings_saved
 							"PUT"  ,
 							"cmf/property/plugin/settings" ,
 							$put_data ,
-							array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy_id: ".$manager_id )
+							array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
 						);
 
 						if (!isset($plugin_settings_response->data->response->success) && $plugin_settings_response->data->response->success != true ) {

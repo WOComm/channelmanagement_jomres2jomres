@@ -58,7 +58,7 @@ class jomres2jomres_changelog_item_process_tariffs_updated
 					"DELETE",
 					"cmf/property/tariffs/".$componetArgs->property_uid,
 					[],
-					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 				);
 
 				foreach ($room_info['room_types'] as $remote_type_id => $remote_type_details) {

@@ -87,7 +87,7 @@ class jomres2jomres_changelog_item_process_room_added
 							"PUT",
 							"cmf/property/room",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy_id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 						);
 						var_dump($send_response);exit;
 						if (isset($send_response->data->response->room_uid) && $send_response->data->response->room_uid > 0) {
