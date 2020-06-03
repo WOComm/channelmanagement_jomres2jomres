@@ -52,20 +52,20 @@ class jomres2jomres_changelog_item_process_extra_deleted
 
 				if (isset($send_response->data->response) && $send_response->data->response == true ) {
 					channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->extras_uid, 0 );
-					logging::log_message("Deleted extra ", 'CMF', 'DEBUG', '');
-					logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-					logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+					logging::log_message("Deleted extra ", 'JOMRES2JOMRES', 'DEBUG', '');
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 					$this->success = true;
 				} else {
 					channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->extras_uid, 0 );
-					logging::log_message("Failed to delete extra ", 'CMF', 'ERROR', '');
-					logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-					logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+					logging::log_message("Failed to delete extra ", 'JOMRES2JOMRES', 'ERROR', '');
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 					$this->success = false;
 				}
 			}
 		} else {
-			logging::log_message("Id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

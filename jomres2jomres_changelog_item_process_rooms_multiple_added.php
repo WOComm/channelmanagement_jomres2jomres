@@ -98,23 +98,23 @@ class jomres2jomres_changelog_item_process_rooms_multiple_added
 
 						if (isset($send_response->data->response->room_uid) && $send_response->data->response->room_uid > 0) {
 							channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $room['room_uid'] , $send_response->data->response->room_uid); // Although the api endpoint should create a link we still need this cross referencing for room images
-							logging::log_message("Added room ", 'CMF', 'DEBUG', '');
-							logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+							logging::log_message("Added room ", 'JOMRES2JOMRES', 'DEBUG', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 							$this->success = true;
 						} else {
-							logging::log_message("Failed to add room ", 'CMF', 'ERROR', '');
-							logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+							logging::log_message("Failed to add room ", 'JOMRES2JOMRES', 'ERROR', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 							// $this->success = false; one failure does not mean the whole lot failed
 						}
 					}
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 
 		if (!isset($this->success)) {

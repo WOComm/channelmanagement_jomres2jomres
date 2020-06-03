@@ -60,17 +60,17 @@ class jomres2jomres_changelog_item_process_property_unpublished
 				}
 
 				if ($success) {
-					logging::log_message("Updated property ".$componetArgs->property_uid, 'CMF', 'DEBUG' , '' );
+					logging::log_message("Updated property ".$componetArgs->property_uid, 'JOMRES2JOMRES', 'DEBUG' , '' );
 					$this->success = true;
 				} else {
-					logging::log_message("Failed to update property. Failed on ".$failedon, 'CMF', 'ERROR' , '' );
+					logging::log_message("Failed to update property. Failed on ".$failedon, 'JOMRES2JOMRES', 'ERROR' , '' );
 					$this->success = false;
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

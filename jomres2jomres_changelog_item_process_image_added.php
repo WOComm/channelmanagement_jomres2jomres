@@ -79,7 +79,7 @@ class jomres2jomres_changelog_item_process_image_added
 				}
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

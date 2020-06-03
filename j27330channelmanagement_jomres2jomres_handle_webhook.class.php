@@ -42,7 +42,7 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 		
 		$this_channel = 'jomres2jomres';
 
-        logging::log_message("Starting Jomres2Jomres 27330 webhook handling" , 'CMF', 'DEBUG' , '' );
+        logging::log_message("Starting Jomres2Jomres 27330 webhook handling" , 'JOMRES2JOMRES', 'DEBUG' , '' );
 
 		// This script will collate and send information to the remote site using the authentication information provided in the componentArgs variable.
 		$ePointFilepath=get_showtime('ePointFilepath');
@@ -55,7 +55,7 @@ class j27330channelmanagement_jomres2jomres_handle_webhook
 		$channel_data = $componentArgs['channel_data'];
 		$managers = $componentArgs['managers'];
 
-		logging::log_message("For Jomres2Jomres 27330 webhook handling found manager data : ".serialize($managers) , 'CMF', 'DEBUG' , '' );
+		logging::log_message("For Jomres2Jomres 27330 webhook handling found manager data : ".serialize($managers) , 'JOMRES2JOMRES', 'DEBUG' , '' );
 
 		if ( isset($push_events[$webhook_event]) && !empty($push_events[$webhook_event]) ) {
 

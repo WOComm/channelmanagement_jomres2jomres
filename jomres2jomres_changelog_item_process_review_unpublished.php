@@ -75,14 +75,14 @@ class jomres2jomres_changelog_item_process_review_unpublished
 							);
 
 							if (isset($send_response->data->response) && $send_response->data->response == true ) {
-								logging::log_message("Unpublished review ", 'CMF', 'DEBUG', '');
-								logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-								logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+								logging::log_message("Unpublished review ", 'JOMRES2JOMRES', 'DEBUG', '');
+								logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+								logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 								$this->success = true;
 							} else {
-								logging::log_message("Failed to unpublish review ", 'CMF', 'ERROR', '');
-								logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-								logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+								logging::log_message("Failed to unpublish review ", 'JOMRES2JOMRES', 'ERROR', '');
+								logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+								logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 								$this->success = false;
 							}
 						}
@@ -90,10 +90,10 @@ class jomres2jomres_changelog_item_process_review_unpublished
 
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

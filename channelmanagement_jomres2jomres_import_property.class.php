@@ -18,6 +18,7 @@ class channelmanagement_jomres2jomres_import_property
 	
 	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
 	{
+
 		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
 		$JRUser = jomres_singleton_abstract::getInstance('jr_user');
 

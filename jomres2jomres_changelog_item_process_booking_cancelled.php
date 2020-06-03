@@ -73,14 +73,14 @@ class jomres2jomres_changelog_item_process_booking_cancelled
 					);
 
 					if (isset($cancel_response->data->response->success) && $cancel_response->data->response->success == true ) {
-						logging::log_message("Cancelled changelog booking ", 'CMF', 'DEBUG' , '' );
-						logging::log_message("Component args ", 'CMF', 'DEBUG' , serialize($componetArgs) );
-						logging::log_message("Response ", 'CMF', 'DEBUG' , serialize($send_response) );
+						logging::log_message("Cancelled changelog booking ", 'JOMRES2JOMRES', 'DEBUG' , '' );
+						logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG' , serialize($componetArgs) );
+						logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG' , serialize($send_response) );
 						$this->success = true;
 					} else {
-						logging::log_message("Failed to cancel changelog booking ", 'CMF', 'ERROR' , '' );
-						logging::log_message("Component args ", 'CMF', 'ERROR' , serialize($componetArgs) );
-						logging::log_message("Response ", 'CMF', 'ERROR' , serialize($send_response) );
+						logging::log_message("Failed to cancel changelog booking ", 'JOMRES2JOMRES', 'ERROR' , '' );
+						logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR' , serialize($componetArgs) );
+						logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR' , serialize($send_response) );
 						$this->success = false;
 					}
 				} else {
@@ -88,7 +88,7 @@ class jomres2jomres_changelog_item_process_booking_cancelled
 				}
 
 		} else {
-			logging::log_message("Property or Contract id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property or Contract id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;
