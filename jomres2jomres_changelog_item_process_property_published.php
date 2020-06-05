@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_property_published
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) ) {
 			jr_import('channelmanagement_jomres2jomres_communication');

@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_booking_added
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) && isset($item->data->contract_uid)) {
 			// So far, so good. Let's find the remote site's booking to import it into this system

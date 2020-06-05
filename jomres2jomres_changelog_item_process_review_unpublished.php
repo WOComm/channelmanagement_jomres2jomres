@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_review_unpublished
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) ) {
 			$item_type = "reviews";

@@ -43,7 +43,7 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 		$ePointFilepath = get_showtime('ePointFilepath');
 
 
-        $item = unserialize($componentArgs->item);
+        $item = unserialize(base64_decode($componentArgs->item));
 
 		if (isset($item->webhook_event) && $item->webhook_event != '' ) {
 			$new_class_name = 'jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);

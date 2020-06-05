@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_rooms_multiple_deleted
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) ) {
 			$item_type = "rooms";

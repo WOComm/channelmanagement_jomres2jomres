@@ -25,7 +25,7 @@ class jomres2jomres_changelog_item_process_property_settings_updated
 {
     function __construct($componetArgs)
 	{
-		$item = unserialize($componetArgs->item);
+		$item = unserialize(base64_decode($componetArgs->item));
 
 		if ( isset($item->data->property_uid) ) {
 			// So far, so good. Let's find the remote site's booking to import it into this system
