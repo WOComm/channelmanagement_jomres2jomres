@@ -43,8 +43,6 @@ class jomres2jomres_changelog_item_process_booking_added
 				$reservations = new stdClass();
 				$reservations->reservations = array();
 
-				$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
-
 				$index = 0; // This is probably overkill right now, however it might be useful in the future to be able to pass multiple bookings. Under review.
 
 				foreach ($response as $booking_data) {
