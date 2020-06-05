@@ -89,7 +89,7 @@ class jomres2jomres_changelog_item_process_room_added
 							$put_data,
 							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
 						);
-						var_dump($send_response);exit;
+
 						if (isset($send_response->data->response->room_uid) && $send_response->data->response->room_uid > 0) {
 							channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->room_uid, $send_response->data->response->room_uid); // Although the api endpoint should create a link we still need this cross referencing for room images
 							logging::log_message("Added room ", 'CMF', 'DEBUG', '');

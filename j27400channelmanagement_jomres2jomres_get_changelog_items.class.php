@@ -57,6 +57,9 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 
 		}
 
+		jr_import('channelmanagement_framework_queue_handling');
+		$channelmanagement_framework_queue_handling = new channelmanagement_framework_queue_handling();
+
 		jr_import('channelmanagement_framework_channels');
 		$channelmanagement_framework_channels = new channelmanagement_framework_channels();
 		$all_channel_ids = $channelmanagement_framework_channels->get_all_channels_ids();
@@ -98,7 +101,8 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 			return;
 		}
 
-		$all_queue_items = channelmanagement_framework_utilities:: get_queue_items();
+
+		$all_queue_items = $channelmanagement_framework_queue_handling->get_queue_items();
 
 		$unique_ids = array();
 		if (!empty($all_queue_items)) {
@@ -170,7 +174,7 @@ class j27400channelmanagement_jomres2jomres_get_changelog_items
 
 										foreach ($items as $item) {
 											try {
-												channelmanagement_framework_utilities:: store_queue_item($item);
+												$channelmanagement_framework_queue_handling->store_queue_item($item);
 											} catch (Exception $e) {
 												logging::log_message("Failed to get store queue item for channel " . $channel_name . ". Message " . $e->getMessage(), 'CMF', 'ERROR', serialize($item));
 											}
