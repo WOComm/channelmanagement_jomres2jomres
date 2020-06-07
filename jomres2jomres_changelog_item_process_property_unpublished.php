@@ -40,8 +40,6 @@ class jomres2jomres_changelog_item_process_property_unpublished
 
 			if (is_object($response) ) {
 
-				$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 				$put_data = array (
 					"property_uid" 			=> $componetArgs->property_uid
 				);
@@ -50,7 +48,7 @@ class jomres2jomres_changelog_item_process_property_unpublished
 					"PUT"  ,
 					"cmf/property/unpublish" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				$success = true;

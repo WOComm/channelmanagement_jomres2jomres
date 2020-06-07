@@ -36,7 +36,7 @@ class jomres2Jomres_webhookevent_booking_added
 			}
 		}
 
-		logging::log_message(get_showtime("current_webhook_task")." -- "."Sending a booking to remote server" , 'CMF', 'DEBUG' , '' );
+		logging::log_message(get_showtime("current_webhook_task")." -- "."Sending a booking to remote server" , 'JOMRES2JOMRES', 'DEBUG' , '' );
 
 		$ePointFilepath=get_showtime('ePointFilepath');
 
@@ -57,7 +57,7 @@ class jomres2Jomres_webhookevent_booking_added
 
 		$response = $channelmanagement_framework_singleton->rest_api_communicate( $this_channel , 'GET' , 'cmf/properties/ids');
 
-		logging::log_message(get_showtime("task")." -- "."After trying to find property ids on the local system : ".serialize($response) , 'CMF', 'DEBUG' , '' );
+		logging::log_message(get_showtime("task")." -- "."After trying to find property ids on the local system : ".serialize($response) , 'JOMRES2JOMRES', 'DEBUG' , '' );
 
         if (!isset($response->data->response)) {
             throw new Exception ( "Channel not associated with any properties or api failed to connect");
@@ -159,7 +159,7 @@ class jomres2Jomres_webhookevent_booking_added
 
 		$response = $remote_server_communication->communicate( "PUT" , 'cmf/reservations/add' , $data_array , true );
 
-		logging::log_message(get_showtime("current_webhook_task")." -- "."Response from  sending a booking to the remote service : ".serialize($response) , 'CMF', 'DEBUG' , '' );
+		logging::log_message(get_showtime("current_webhook_task")." -- "."Response from  sending a booking to the remote service : ".serialize($response) , 'JOMRES2JOMRES', 'DEBUG' , '' );
 
 
 		return $response;

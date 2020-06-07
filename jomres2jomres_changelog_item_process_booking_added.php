@@ -80,7 +80,7 @@ class jomres2jomres_changelog_item_process_booking_added
 						$room_types = (array)$booking_data->room_types_booked;
 
 						IF (!isset($room_types[$first_key])) {
-							logging::log_message("Failed to add changelog booking because the room type relationship is wrong. Most likely caused by the booking being added on the remote system then cancelled before the booking could be created on the child server. ", 'CMF', 'WARNNG' , '' );
+							logging::log_message("Failed to add changelog booking because the room type relationship is wrong. Most likely caused by the booking being added on the remote system then cancelled before the booking could be created on the child server. ", 'JOMRES2JOMRES', 'WARNNG' , '' );
 							throw new Exception( 'Failed to add changelog booking because the room type relationship is wrong. Most likely caused by the booking being added on the remote system then cancelled before the booking could be created on the child server.');
 						}
 
@@ -125,34 +125,32 @@ class jomres2jomres_changelog_item_process_booking_added
 					$index++;
 				}
 
-				$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 				$send_response = $jomres_call_api->send_request(
 					"PUT"  ,
 					"cmf/reservations/add" ,
 					array ( "reservations" => json_encode($reservations) ) ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (isset($send_response->data->response->successful_bookings) && !empty($send_response->data->response->successful_bookings)) {
-					logging::log_message("Added changelog booking ", 'CMF', 'DEBUG' , '' );
-					logging::log_message("Component args ", 'CMF', 'DEBUG' , serialize($componetArgs) );
-					logging::log_message("Response ", 'CMF', 'DEBUG' , serialize($send_response) );
+					logging::log_message("Added changelog booking ", 'JOMRES2JOMRES', 'DEBUG' , '' );
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG' , serialize($componetArgs) );
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG' , serialize($send_response) );
 					$this->success = true;
 				} else {
 
-					logging::log_message("Failed to add changelog booking ", 'CMF', 'ERROR' , '' );
-					logging::log_message("Component args ", 'CMF', 'ERROR' , serialize($componetArgs) );
-					logging::log_message("Response ", 'CMF', 'ERROR' , serialize($send_response) );
+					logging::log_message("Failed to add changelog booking ", 'JOMRES2JOMRES', 'ERROR' , '' );
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR' , serialize($componetArgs) );
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR' , serialize($send_response) );
 					$this->success = false;
 
 				}
 
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property or Contract id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property or Contract id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

@@ -32,8 +32,6 @@ class jomres2jomres_changelog_item_process_extra_saved
 
 			$cross_references = channelmanagement_framework_utilities :: get_cross_references_for_property_uid ( 'jomres2jomres' , $componetArgs->property_uid , $item_type );
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('channelmanagement_jomres2jomres_communication');
 			$remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
@@ -50,7 +48,7 @@ class jomres2jomres_changelog_item_process_extra_saved
 				"GET",
 				"cmf/list/tax/rates",
 				[],
-				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 			);
 
 			if (!isset($local->data->response)) {
@@ -127,28 +125,28 @@ class jomres2jomres_changelog_item_process_extra_saved
 							"PUT",
 							"cmf/property/extra",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 						);
 
 						if (isset($send_response->data->response->extra_id) && $send_response->data->response->extra_id > 0) {
 							channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->extras_uid, $send_response->data->response->extra_id);
-							logging::log_message("Added extra ", 'CMF', 'DEBUG', '');
-							logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+							logging::log_message("Added extra ", 'JOMRES2JOMRES', 'DEBUG', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 							$this->success = true;
 						} else {
-							logging::log_message("Failed to add extra ", 'CMF', 'ERROR', '');
-							logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+							logging::log_message("Failed to add extra ", 'JOMRES2JOMRES', 'ERROR', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 							$this->success = false;
 						}
 					}
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

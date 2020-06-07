@@ -45,6 +45,8 @@ class j27410channelmanagement_jomres2jomres_process_changelog_queue_item
 
         $item = unserialize(base64_decode($componentArgs->item));
 
+		logging::log_message('Success not returned ', 'JOMRES2JOMRES', 'WARNING', serialize($thing_class_result));
+
 		if (isset($item->webhook_event) && $item->webhook_event != '' ) {
 			$new_class_name = 'jomres2jomres_changelog_item_process_'.strtolower($item->webhook_event);
 			if (file_exists( $ePointFilepath.$new_class_name.'.php') ) {

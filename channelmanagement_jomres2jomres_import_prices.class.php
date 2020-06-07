@@ -62,7 +62,7 @@ class channelmanagement_jomres2jomres_import_prices
 			"PUT",
 			'cmf/property/base/price/',
 			$post_data,
-			array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+			array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 		);
 
 		$base_price_set_response = $channelmanagement_framework_singleton->rest_api_communicate( $channel , 'PUT' , 'cmf/property/base/price/' , $post_data );
@@ -112,7 +112,7 @@ class channelmanagement_jomres2jomres_import_prices
 				"PUT",
 				'cmf/property/base/price/',
 				$post_data,
-				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 			);
 		}
 	}

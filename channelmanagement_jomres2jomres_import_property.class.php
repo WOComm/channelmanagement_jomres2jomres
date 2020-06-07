@@ -19,7 +19,7 @@ class channelmanagement_jomres2jomres_import_property
 	public static function import_property( $channel , $remote_property_id = 0 , $proxy_id = 0 )
 	{
 
-		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
+
 		$JRUser = jomres_singleton_abstract::getInstance('jr_user');
 
 		jr_import('channelmanagement_framework_queue_handling');
@@ -27,18 +27,26 @@ class channelmanagement_jomres2jomres_import_property
 
 		$mapped_dictionary_items = channelmanagement_framework_utilities:: get_mapped_dictionary_items($channel, $mapped_to_jomres_only = true);
 
+		$channelmanagement_framework_singleton = jomres_singleton_abstract::getInstance('channelmanagement_framework_singleton');
+		$channelmanagement_framework_singleton->proxy_manager_id = $JRUser->userid;
+
 		jr_import('channelmanagement_jomres2jomres_communication');
 		$remote_server_communication = new channelmanagement_jomres2jomres_communication();
 
 		set_showtime("property_managers_id", $JRUser->id);
 
-		$remote_url = $remote_server_communication->communicate("GET", '/cmf/url', [], true);
+		$remote_url = $remote_server_communication->communicate("GET", '/cmf/url', [] );
 
 		$remote_property = $remote_server_communication->communicate("GET", '/cmf/property/' . $remote_property_id, [], true);
 
 		// We don't want to import unpublished properties, they're not ready (I suspect I'll need to change this, but for now we'll stick with it)
 
 		if ($remote_property != false && (int)$remote_property->published == 1) {
+
+			$changelog_response = $remote_server_communication->communicate( 'GET', '/cmf/property/change/log/'.$remote_property_id, [] , true );
+			if ( empty($changelog_response)) {
+				throw new Exception("This property does not have any webhook events recorded on the parent server. It cannot be imported. ");
+			}
 
 			// Get the property settings
 			$remote_settings = $remote_server_communication->communicate("GET", '/cmf/property/settings/' . $remote_property_id, [], true);
@@ -205,38 +213,24 @@ class channelmanagement_jomres2jomres_import_property
 
 		$new_property->property_details['max_guests']				= $max_guests_in_property;
 
-		// Not supported (yet?)
-		//$new_property->remote_room_features						= $property_room_features;
-		$new_property->remote_property_features						= $property_features;
-
-		// New we'll pull location information for this property. The location/information endpoint will try to fuzzy guess the region id if it can't find an exact match
-		$response_location_information = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'GET', 'cmf/location/information/' . $new_property->property_details['lat'] . '/' . $new_property->property_details['long'] . '/');
-
-		if (!isset($response_location_information->data->response->country_code) || trim($response_location_information->data->response->country_code) == '') {
-			throw new Exception(jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_COUNTRY_CODE_NOT_FOUND', 'CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_COUNTRY_CODE_NOT_FOUND', false));
-		}
-
-		if (!isset($response_location_information->data->response->region_id) || trim($response_location_information->data->response->region_id) == '') {
-			throw new Exception(jr_gettext('CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND', 'CHANNELMANAGEMENT_JOMRES2JOMRES_IMPORT_REGION_ID_NOT_FOUND', false));
-		}
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Ok, we've collected the information we need to start building our property from the available information from the channel, let's start creating our new property
 
 		$new_property_basics_array = array(
-			"property_name"	=> $new_property->property_details['name'],
-			"remote_uid"	=> $new_property->property_details['property_id'],
-			"country"		=> $response_location_information->data->response->country_code,
-			"region_id"		=> $response_location_information->data->response->region_id,
+			"property_name"	=> $remote_property->property_name,
+			"remote_uid"	=> $remote_property->propertys_uid,
+			"country"		=> $remote_property->property_country,
+			"region_id"		=> $remote_property->property_region,
 			"ptype_id"		=> $local_property_type
 		);
 
+			// Create the new property
 
-			// Create the new property 
 			$response = $channelmanagement_framework_singleton->rest_api_communicate($channel, 'POST', 'cmf/property/', $new_property_basics_array);
 
 			if (!isset($response->data->response)) {
-				throw new Exception("response->data->response not set, failed to create property.");
+				throw new Exception( $response->error_message );
 			}
 
 			$new_property_id = $response->data->response;
@@ -283,13 +277,19 @@ class channelmanagement_jomres2jomres_import_property
 
 					return (object)array("success" => true, "new_property_id" => $new_property_id);
 				} else {
-					return (object)array("success" => false, "message" => "Property appeared to be created but is incomplete.");
+					$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'DELETE' , 'cmf/property/local/'.$new_property_id );
+
+					$status_warnings = "Received the following status warnings : ";
+					foreach ( $property_status_review_response->data->response->warnings as $warning) {
+						$status_warnings .= $warning;
+					}
+					return (object)array("success" => false, "message" => "Property appeared to be created but is incomplete. ".$status_warnings );
 				}
 			}
 			catch (Exception $e)
 			{
 				$channelmanagement_framework_singleton->rest_api_communicate( $channel , 'DELETE' , 'cmf/property/local/'.$new_property_id );
-				logging::log_message("Failed to create new property, so incomplete and removed again. Error message : ".$e->getMessage()." -- Remote property id ".$remote_property_id , 'CMF', 'DEBUG' , '' );
+				logging::log_message("Failed to create new property, so incomplete and removed again. Error message : ".$e->getMessage()." -- Remote property id ".$remote_property_id , 'JOMRES2JOMRES', 'DEBUG' , '' );
 			}
 
 }

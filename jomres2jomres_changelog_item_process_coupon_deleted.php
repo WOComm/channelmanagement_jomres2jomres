@@ -40,8 +40,6 @@ class jomres2jomres_changelog_item_process_coupon_deleted
 
 			$response = $remote_server_communication->communicate( "GET" , '/cmf/property/list/coupons/'.$item->data->property_uid , [] , true );
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -50,25 +48,25 @@ class jomres2jomres_changelog_item_process_coupon_deleted
 					"DELETE",
 					"cmf/property/coupon/". $componetArgs->property_uid.'/'.$cross_references[$item->data->coupon_id]['local_id'],
 					[],
-					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 					);
 
 				if (isset($send_response->data->response) && $send_response->data->response == true ) {
 					channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->coupon_id, 0 );
-					logging::log_message("Deleted coupon ", 'CMF', 'DEBUG', '');
-					logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-					logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+					logging::log_message("Deleted coupon ", 'JOMRES2JOMRES', 'DEBUG', '');
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 					$this->success = true;
 				} else {
 					channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->coupon_id, 0 );
-					logging::log_message("Failed to delete coupon ", 'CMF', 'ERROR', '');
-					logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-					logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+					logging::log_message("Failed to delete coupon ", 'JOMRES2JOMRES', 'ERROR', '');
+					logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+					logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 					$this->success = false;
 				}
 			}
 		} else {
-			logging::log_message("Id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

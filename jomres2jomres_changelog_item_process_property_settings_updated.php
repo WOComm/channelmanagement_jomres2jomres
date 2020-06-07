@@ -42,8 +42,6 @@ class jomres2jomres_changelog_item_process_property_settings_updated
 
 			if (is_object($response) ) {
 
-				$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 				$response = json_decode(json_encode($response), true);
 
 				if (is_array($response)) {
@@ -61,7 +59,7 @@ class jomres2jomres_changelog_item_process_property_settings_updated
 						"PUT"  ,
 						"cmf/property/settings" ,
 						$put_data ,
-						array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+						array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 					);
 
 					if (!isset($settings_response->data->response->success) && $settings_response->data->response->success != true ) {

@@ -58,7 +58,7 @@ class jomres2jomres_changelog_item_process_tariffs_updated
 					"DELETE",
 					"cmf/property/tariffs/".$componetArgs->property_uid,
 					[],
-					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				foreach ($room_info['room_types'] as $remote_type_id => $remote_type_details) {
@@ -85,12 +85,12 @@ class jomres2jomres_changelog_item_process_tariffs_updated
 					$remote_room_type_id	= $room_types['amenity']->remote_item_id;
 					$local_room_type_id		= $room_types['amenity']->jomres_id;
 
-					channelmanagement_jomres2jomres_import_prices::import_prices($manager_id, 'jomres2jomres', $item->data->property_uid , $componetArgs->property_uid, $max_guests_in_property, $local_room_type_id , $remote_room_type_id );
+					channelmanagement_jomres2jomres_import_prices::import_prices(channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ), 'jomres2jomres', $item->data->property_uid , $componetArgs->property_uid, $max_guests_in_property, $local_room_type_id , $remote_room_type_id );
 				}
 			}
 
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

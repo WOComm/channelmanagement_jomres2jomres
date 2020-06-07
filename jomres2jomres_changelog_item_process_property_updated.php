@@ -42,9 +42,6 @@ class jomres2jomres_changelog_item_process_property_updated
 
 			if (is_object($response) ) {
 
-				$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
-				
 				// Metas -----------------------------------------------------------------------------
 				$put_data = array (
 					"property_uid" 			=> $componetArgs->property_uid,
@@ -57,7 +54,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/metas" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($metas_response->data->response->propertys_uid)) {
@@ -98,7 +95,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/features" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($features_response->data->response->propertys_uid)) {
@@ -120,7 +117,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/location" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($location_response->data->response->propertys_uid)) {
@@ -141,7 +138,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/contacts" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($contacts_response->data->response->propertys_uid)) {
@@ -164,7 +161,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/address" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($address_response->data->response->propertys_uid)) {
@@ -189,7 +186,7 @@ class jomres2jomres_changelog_item_process_property_updated
 					"PUT"  ,
 					"cmf/property/text" ,
 					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
+					array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 				);
 
 				if (!isset($text_response->data->response->propertys_uid)) {
@@ -197,67 +194,22 @@ class jomres2jomres_changelog_item_process_property_updated
 					$failed_on = "cmf/property/text";
 				}
 
-			/*	// Location -----------------------------------------------------------------------------
-				$put_data = array (
-					"property_uid" 	=> $componetArgs->property_uid,
-					"country_code" 	=> $response->property_country,
-					"region_id"		=> $response->property_region,
-					"lat"			=> $response->lat,
-					"long"			=> $response->long,
-
-				);
-
-				$location_response = $jomres_call_api->send_request(
-					"PUT"  ,
-					"cmf/property/location" ,
-					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
-				);
-
-				if (!isset($location_response->data->response->propertys_uid)) {
-					$success = false;
-					$failed_on = "cmf/property/location";
-				}
-
-				// Location -----------------------------------------------------------------------------
-				$put_data = array (
-					"property_uid" 	=> $componetArgs->property_uid,
-					"country_code" 	=> $response->property_country,
-					"region_id"		=> $response->property_region,
-					"lat"			=> $response->lat,
-					"long"			=> $response->long,
-
-				);
-
-				$location_response = $jomres_call_api->send_request(
-					"PUT"  ,
-					"cmf/property/location" ,
-					$put_data ,
-					array (	"X-JOMRES-channel-name: "."jomres2jomres", "X-JOMRES-proxy-id: ".$manager_id )
-				);
-
-				if (!isset($location_response->data->response->propertys_uid)) {
-					$success = false;
-					$failed_on = "cmf/property/location";
-				}*/
-
-
 				if ($success) {
-					logging::log_message("Updated property ".$componetArgs->property_uid, 'CMF', 'DEBUG' , '' );
+					logging::log_message("Updated property ".$componetArgs->property_uid, 'JOMRES2JOMRES', 'DEBUG' , '' );
 
 					$this->success = true;
 				} else {
 
-					logging::log_message("Failed to update property. Failed on ".$failedon, 'CMF', 'ERROR' , '' );
+					logging::log_message("Failed to update property. Failed on ".$failedon, 'JOMRES2JOMRES', 'ERROR' , '' );
 					$this->success = false;
 
 				}
 
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

@@ -30,8 +30,6 @@ class jomres2jomres_changelog_item_process_image_deleted
 		if ( isset($item->data->property_uid) ) {
 			$cross_references = channelmanagement_framework_utilities:: get_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, '');
 
-			$manager_id = channelmanagement_framework_utilities:: get_manager_id_for_property_uid($componetArgs->property_uid);
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -39,7 +37,7 @@ class jomres2jomres_changelog_item_process_image_deleted
 				"GET",
 				"cmf/property/images/" . $componetArgs->property_uid,
 				[],
-				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+				array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 			);
 
 			$local_images = $response = json_decode(json_encode($send_response), true);

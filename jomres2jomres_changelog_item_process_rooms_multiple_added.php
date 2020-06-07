@@ -44,8 +44,6 @@ class jomres2jomres_changelog_item_process_rooms_multiple_added
 			$response = $remote_server_communication->communicate( "GET" , '/cmf/property/rooms/'.$item->data->property_uid , [] , true );
 			$response = json_decode(json_encode($response), true);
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -93,7 +91,7 @@ class jomres2jomres_changelog_item_process_rooms_multiple_added
 							"PUT",
 							"cmf/property/room",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 						);
 
 						if (isset($send_response->data->response->room_uid) && $send_response->data->response->room_uid > 0) {

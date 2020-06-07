@@ -44,8 +44,6 @@ class jomres2jomres_changelog_item_process_review_saved
 
 			$response = json_decode(json_encode($response->reviews), true);
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -73,7 +71,7 @@ class jomres2jomres_changelog_item_process_review_saved
 								"PUT",
 								"cmf/property/review",
 								$put_data,
-								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 							);
 
 							if (isset($send_response->data->response->rating_id) && $send_response->data->response->rating_id > 0) {

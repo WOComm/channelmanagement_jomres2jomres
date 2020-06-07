@@ -43,8 +43,6 @@ class jomres2jomres_changelog_item_process_room_added
 
 			$response = $remote_server_communication->communicate( "GET" , '/cmf/property/rooms/'.$item->data->property_uid , [] , true );
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -87,28 +85,28 @@ class jomres2jomres_changelog_item_process_room_added
 							"PUT",
 							"cmf/property/room",
 							$put_data,
-							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+							array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 						);
 
 						if (isset($send_response->data->response->room_uid) && $send_response->data->response->room_uid > 0) {
 							channelmanagement_framework_utilities::set_cross_references_for_property_uid('jomres2jomres', $componetArgs->property_uid, $item_type, $item->data->room_uid, $send_response->data->response->room_uid); // Although the api endpoint should create a link we still need this cross referencing for room images
-							logging::log_message("Added room ", 'CMF', 'DEBUG', '');
-							logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+							logging::log_message("Added room ", 'JOMRES2JOMRES', 'DEBUG', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 							$this->success = true;
 						} else {
-							logging::log_message("Failed to add room ", 'CMF', 'ERROR', '');
-							logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-							logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+							logging::log_message("Failed to add room ", 'JOMRES2JOMRES', 'ERROR', '');
+							logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+							logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 							$this->success = false;
 						}
 					}
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;

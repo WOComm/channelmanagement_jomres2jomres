@@ -44,8 +44,6 @@ class jomres2jomres_changelog_item_process_review_published
 
 			$response = json_decode(json_encode($response->reviews), true);
 
-			$manager_id = channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid );
-
 			jr_import('jomres_call_api');
 			$jomres_call_api = new jomres_call_api('system');
 
@@ -71,18 +69,18 @@ class jomres2jomres_changelog_item_process_review_published
 								"PUT",
 								"cmf/property/review/publish",
 								$put_data,
-								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . $manager_id)
+								array("X-JOMRES-channel-name: " . "jomres2jomres", "X-JOMRES-proxy-id: " . channelmanagement_framework_utilities :: get_manager_id_for_property_uid ( $componetArgs->property_uid ) )
 							);
 
 							if (isset($send_response->data->response) && $send_response->data->response == true ) {
-								logging::log_message("Published review ", 'CMF', 'DEBUG', '');
-								logging::log_message("Component args ", 'CMF', 'DEBUG', serialize($componetArgs));
-								logging::log_message("Response ", 'CMF', 'DEBUG', serialize($send_response));
+								logging::log_message("Published review ", 'JOMRES2JOMRES', 'DEBUG', '');
+								logging::log_message("Component args ", 'JOMRES2JOMRES', 'DEBUG', serialize($componetArgs));
+								logging::log_message("Response ", 'JOMRES2JOMRES', 'DEBUG', serialize($send_response));
 								$this->success = true;
 							} else {
-								logging::log_message("Failed to publish review ", 'CMF', 'ERROR', '');
-								logging::log_message("Component args ", 'CMF', 'ERROR', serialize($componetArgs));
-								logging::log_message("Response ", 'CMF', 'ERROR', serialize($send_response));
+								logging::log_message("Failed to publish review ", 'JOMRES2JOMRES', 'ERROR', '');
+								logging::log_message("Component args ", 'JOMRES2JOMRES', 'ERROR', serialize($componetArgs));
+								logging::log_message("Response ", 'JOMRES2JOMRES', 'ERROR', serialize($send_response));
 								$this->success = false;
 							}
 						}
@@ -90,10 +88,10 @@ class jomres2jomres_changelog_item_process_review_published
 
 				}
 			} else {
-				logging::log_message("Did not get a valid response from parent server", 'CMF', 'ERROR' , serialize($response) );
+				logging::log_message("Did not get a valid response from parent server", 'JOMRES2JOMRES', 'ERROR' , serialize($response) );
 			}
 		} else {
-			logging::log_message("Property id not set", 'CMF', 'INFO' , '' );
+			logging::log_message("Property id not set", 'JOMRES2JOMRES', 'INFO' , '' );
 		}
 		if (!isset($this->success)) {
 			$this->success = false;
