@@ -26,28 +26,40 @@ function cmf_jomres2jomres_save_plugin_setting ( $user_id = 0 , $host = '' , $ke
 		throw new Exception( 'Value not set' );
 	}
 
+	if ($user_id == 0 ) {
+		throw new Exception( 'User id not set' );
+	}
+
 	$query = "SELECT `value` FROM #__jomres_pluginsettings WHERE `prid` = 0 AND `plugin` = 'jomres2jomres' LIMIT 1 ";
 	$settingList = doSelectSql($query);
 
-	if (!empty($settingList)) {
+	if (!empty($settingList) ) {
 
 		$existing_settings = unserialize($settingList[0]->value);
-		@$existing_settings->settings[$user_id][$host]->$key = $value;
+
+		if (!isset($existing_settings->settings)) {
+			$existing_settings->settings = array();
+		}
+
+		if (!isset($existing_settings->settings[$user_id][$host])) {
+			$existing_settings->settings[$user_id][$host] = new stdClass();
+		}
+
+		$existing_settings->settings[$user_id][$host]->$key = $value;
 		$v = serialize($existing_settings);
 
 		$query = "UPDATE #__jomres_pluginsettings SET `value`='$v' WHERE `prid` = 0 AND `plugin` = 'jomres2jomres' LIMIT 1";
 		doInsertSql($query, jr_gettext('_JOMRES_MR_AUDIT_PLUGINS_UPDATE', '_JOMRES_MR_AUDIT_PLUGINS_UPDATE', false));
 	} else {
-
-		$user_details[0]['name'] =  "system";
-		if ($user_id > 0 ) {
-			$user_details = jomres_cmsspecific_getCMS_users_frontend_userdetails_by_id($user_id);
-		}
+		$user_details = jomres_cmsspecific_getCMS_users_frontend_userdetails_by_id($user_id);
 
 		$new_settings = new stdClass();
+		$new_settings->settings = array();
+		$new_settings->settings[$user_id] = array();
+		$new_settings->settings[$user_id][$host] = new stdClass();
 
-		@$new_settings->settings[$user_id][$host]->$key	= $value;
-		$new_settings->settings[$user_id]['info'] = "Settings index is user id of the connected user : ".$user_details[$user_id]['name'];
+		$new_settings->settings[$user_id][$host]->$key	= $value;
+
 		$v = serialize($new_settings);
 
 		$query = "INSERT INTO #__jomres_pluginsettings
@@ -58,7 +70,7 @@ function cmf_jomres2jomres_save_plugin_setting ( $user_id = 0 , $host = '' , $ke
 }
 
 function cmf_jomres2jomres_get_plugin_setting ( $user_id = 0 , $host) {
-	$result = new stdClass();
+	$result = array();
 	$query = "SELECT `value` FROM #__jomres_pluginsettings WHERE `prid` = 0 AND `plugin` = 'jomres2jomres' LIMIT 1";
 	$settingList = doSelectSql($query);
 

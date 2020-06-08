@@ -31,7 +31,7 @@ class channelmanagement_jomres2jomres_import_property
 		$channelmanagement_framework_singleton->proxy_manager_id = $JRUser->userid;
 
 		jr_import('channelmanagement_jomres2jomres_communication');
-		$remote_server_communication = new channelmanagement_jomres2jomres_communication();
+		$remote_server_communication = new channelmanagement_jomres2jomres_communication($JRUser->userid);
 
 		set_showtime("property_managers_id", $JRUser->id);
 

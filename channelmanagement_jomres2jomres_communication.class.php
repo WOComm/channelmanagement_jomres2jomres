@@ -18,6 +18,10 @@ class channelmanagement_jomres2jomres_communication
 
 	function __construct( $user_id = 0 )
 	{
+		if ($user_id == 0 ) {
+			throw new Exception( 'User id not set' );
+		}
+
 		$siteConfig = jomres_singleton_abstract::getInstance('jomres_config_site_singleton');
 		$jrConfig = $siteConfig->get();
 
@@ -27,20 +31,22 @@ class channelmanagement_jomres2jomres_communication
 
 		$url = trim($jrConfig['channel_manager_framework_user_accounts']['jomres2jomres']["channel_management_jomres2jomres_parent_site"] , '/' );
 		$url = parse_url($url);
-		$this->url = $url['scheme'].'://'.$url['host'];
+		$this->host = $url['host'];
+		$this->user_id = $user_id;
+		$this->url = $url['scheme'].'://'.$this->host;
 		$this->path = trim( $url['path'] , "_" );
 
 		$plugin_settings = cmf_jomres2jomres_get_plugin_setting( $user_id , $url['host']);
 
-		if (isset($plugin_settings->token)) {
-			$this->token = $plugin_settings->token;
+		if ( isset($plugin_settings[$this->host]->token)) {
+			$this->token = $plugin_settings[$this->host]->token;
 		} else {
 			$this->token = $this->get_token();
-			cmf_jomres2jomres_save_plugin_setting( $user_id , $url['host'] , 'token' , $this->token );
+			cmf_jomres2jomres_save_plugin_setting( $this->user_id , $this->host , 'token' , $this->token );
 		}
-		if (!isset($plugin_settings->channel_id)) {
+		if (!isset($plugin_settings[$this->host]->channel_id)) {
 			$channel_id = $this->announce();
-			cmf_jomres2jomres_save_plugin_setting( $user_id , $url['host'] , 'channel_id' , $channel_id );
+			cmf_jomres2jomres_save_plugin_setting( $this->user_id , $this->host , 'channel_id' , $channel_id );
 		}
 	}
 
@@ -101,12 +107,19 @@ class channelmanagement_jomres2jomres_communication
 			$response = $client->request($method, $uri, $options);
 
 		}
-		catch (Exception $e) {
-			echo "Failed to get response from channel
-			";
-
+		catch (\GuzzleHttp\Exception\ClientException $e) {
 			logging::log_message("Failed to get response from channel manager. Message ".$e->getMessage(), 'CMF', 'ERROR' , "rentalsunited" );
-			return false;
+
+			// This will catch all 400 level errors.
+			if ($e->getResponse()->getStatusCode() == 401 ) { // the token isn't valid, we'll request a new one and start again
+				$this->token = $this->get_token();
+
+				if ( !is_null($this->token) && $this->token != '' ) {
+					cmf_jomres2jomres_save_plugin_setting( $this->user_id , $this->host , 'token' , $this->token );
+					$this->communicate( $method , $endpoint , $putpost , $clear_cache ); // Recursive
+				}
+			}
+		//	var_dump($e->getResponse()->getStatusCode());exit;
 		}
 
 		if (!isset($response)) {
@@ -114,6 +127,7 @@ class channelmanagement_jomres2jomres_communication
 		}
 
 		$response_str = (string)$response->getBody();
+
 		$response_json_decoded = json_decode($response_str);
 
 		if ( $method_can_be_cached && isset($response_json_decoded->data->response) ) {

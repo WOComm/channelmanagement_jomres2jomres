@@ -23,6 +23,9 @@ class channelmanagement_jomres2jomres_list_remote_properties
 	function get_remote_properties()
 	{
 		$JRUser									= jomres_singleton_abstract::getInstance( 'jr_user' );
+		if ($JRUser->id == 0 ) {
+			return;
+		}
 
         jr_import('channelmanagement_jomres2jomres_communication');
 

@@ -47,7 +47,7 @@ class channelmanagement_jomres2jomres_dictionaries
 
 		if (!empty($dictionary_array)) {
             jr_import('channelmanagement_jomres2jomres_communication');
-            $remote_server_communication = new channelmanagement_jomres2jomres_communication();
+            $remote_server_communication = new channelmanagement_jomres2jomres_communication( 999999999 );
 
 			foreach ($dictionary_array as $dictionary) {
 
